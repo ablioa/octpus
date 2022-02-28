@@ -22,6 +22,7 @@ public class MapContext {
         indexCounter = new HashMap<>();
         target = new BaseDynamicRoleData();
         nodePath = new HashMap<>();
+        nodePath.put("",target);
     }
 
     public Object getNodeValue(String key,int type){

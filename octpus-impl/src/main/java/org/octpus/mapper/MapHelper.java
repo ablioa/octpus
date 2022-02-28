@@ -102,7 +102,9 @@ public class MapHelper {
                     while(ss.size() < index+1){
                         ss.add(new BaseDynamicRoleData());
                     }
-                    context.getTarget().setProperty(subnode[ix],ss);
+
+                    BaseDynamicRoleData ssp = (BaseDynamicRoleData)context.getNodeValue(parent,0);
+                    ssp.setProperty(subnode[ix],ss);
 
                     break;
                 }
