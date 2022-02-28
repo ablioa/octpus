@@ -1,0 +1,28 @@
+archivesBaseName = "octpus-server"
+version="1.0.0-SNAPSHOT"
+
+buildscript {
+    ext {
+        springBootVersion = '2.0.9.RELEASE'
+    }
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+bootJar{
+    enabled = true
+    mainClassName='org.octpus.MainApp'
+    classifier= 'boot'
+    version=version
+}
+
+dependencies{
+    compile project(":octpus-impl")
+}
+

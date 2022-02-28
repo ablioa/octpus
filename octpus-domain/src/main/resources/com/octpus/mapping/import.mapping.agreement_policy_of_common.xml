@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<template name="MID001" subSystem="policy" description="测试模型数据">
+    <attribute version="1.0.0" vendor="fndsoft">
+        <fileSize>23202342</fileSize>
+        <encoding>utf-8</encoding>
+        <checksum>cd9fd1e30537e2e421555a5fbb96ef55</checksum>
+        <logs>
+            <log content="创建" time="2022-01-01 11:00:00">hello,world</log>
+            <log content="更新" time="2022-01-01 13:00:00">hello,world</log>
+        </logs>
+    </attribute>
+
+    <entities>
+        <entity sheet="0" start="1" domainType="com.octpus.AgreementPolicyCommonDTO">
+            <name>agreement_policy</name>
+            <sheetName>数据导入项</sheetName>
+            <candidateKeys>
+                <candidateKey>0</candidateKey>
+            </candidateKeys>
+            <columns>
+                <column column="0" type="string" mandatory="true">recordId</column>
+                <column column="1" type="string" mandatory="true">agreementNo</column>
+                <column column="2" type="string" mandatory="false">serialNo</column>
+                <column column="3" type="string" mandatory="false">handlerCode</column>
+                <column column="4" type="string" mandatory="true">busiDevelopRate</column>
+                <column column="5" type="string" mandatory="true">handlerCode2</column>
+                <column column="6" type="string" mandatory="true">busiDevelopRate2</column>
+                <column column="7" type="string" mandatory="false">handlerCode3</column>
+                <column column="8" type="string" mandatory="false">busiDevelopRate3</column>
+                <column column="9" type="string" mandatory="false">busiChannelType</column>
+                <column column="10" type="string" mandatory="false">lifeSalesCode</column>
+                <column column="11" type="string" mandatory="false">agentFeeRate</column>
+                <column column="12" type="string" mandatory="false">channelCode</column>
+                <column column="13" type="string" mandatory="false">busiDevCertifNo</column>
+                <column column="14" type="string" mandatory="false">applicantType</column>
+                <column column="15" type="string" mandatory="false">applicantPartCode</column>
+                <column column="16" type="string" mandatory="false">applicantName</column>
+                <column column="17" type="string" mandatory="false">applicantCertType</column>
+                <column column="18" type="string" mandatory="false">applicantCertNo</column>
+                <column column="19" type="string" mandatory="false">applicantGatPassPort</column>
+                <column column="20" type="string" mandatory="false">applicantTelNumber</column>
+                <column column="21" type="string" mandatory="false">applicantEmail</column>
+                <column column="22" type="string" mandatory="false">applicantAddress</column>
+                <column column="23" type="string" mandatory="false">insuredName</column>
+                <column column="24" type="string" mandatory="false">relationToApplicant</column>
+                <column column="25" type="string" mandatory="false">insuredCertType</column>
+                <column column="26" type="string" mandatory="false">insuredCertNo</column>
+                <column column="27" type="string" mandatory="false">insuredGatPassPort</column>
+                <column column="28" type="string" mandatory="false">insuredBirthDay</column>
+                <column column="29" type="string" mandatory="false">insuredOccupationCode</column>
+                <column column="30" type="string" mandatory="false">benefitType</column>
+                <column column="31" type="string" mandatory="false">groupNo</column>
+                <column column="32" type="string" mandatory="false">copies</column>
+                <column column="33" type="string" mandatory="false">proposalDate</column>
+                <column column="34" type="string" mandatory="false">signDate</column>
+                <column column="35" type="string" mandatory="false">startTime</column>
+                <column column="36" type="string" mandatory="false">remark</column>
+            </columns>
+        </entity>
+
+        <entity sheet="1" start="1" domainType="com.octpus.AgreementPolicyBeneficiaryCommonDTO">
+            <name>beneficiary</name>
+            <sheetName>数据导入项-受益人</sheetName>
+            <candidateKeys>
+                <candidateKey>0</candidateKey>
+            </candidateKeys>
+            <columns>
+                <column column="0" type="string" mandatory="true">recordId</column>
+                <column column="1" type="string" mandatory="true">customerType</column>
+                <column column="2" type="string" mandatory="true">customerName</column>
+                <column column="3" type="string" mandatory="true">certType</column>
+                <column column="4" type="string" mandatory="true">certNo</column>
+                <column column="5" type="string" mandatory="false">birthDate</column>
+                <column column="6" type="string" mandatory="false">sex</column>
+                <column column="7" type="string" mandatory="true">relationToInsured</column>
+                <column column="8" type="string" mandatory="false">benefitSerialNo</column>
+                <column column="9" type="string" mandatory="true">percentOfBenefit</column>
+                <column column="10" type="string" mandatory="false">occupationSmallClass</column>
+                <column column="11" type="string" mandatory="false">telNumber</column>
+                <column column="12" type="string" mandatory="false">gatPassport</column>
+            </columns>
+        </entity>
+    </entities>
+</template>
+

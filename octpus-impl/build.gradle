@@ -1,0 +1,17 @@
+archivesBaseName = "octpus-impl"
+version="1.0.0-SNAPSHOT"
+
+sourceSets {
+    main {
+        java{
+            srcDirs=[]
+        }
+        groovy {
+            srcDirs = ['src/main/groovy','src/main/java']
+        }
+    }
+}
+
+dependencies{
+    compile project(":octpus-domain")
+}

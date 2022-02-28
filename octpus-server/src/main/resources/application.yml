@@ -1,0 +1,43 @@
+server:
+  port: 8000
+
+spring:
+  application:
+  name: wit-service
+  jpa:
+    show-sql: false
+    format-sql: true
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL5Dialect
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+  data:
+    mongodb:
+      uri: mongodb://bookapp:abc123@warmcode.net:27017/bookdb?authSource=admin&authMechanism=SCRAM-SHA-1
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: "jdbc:mysql://warmcode.net:3306/bookdb?useUnicode=true&characterEncoding=UTF-8"
+    username: bookapp
+    password: "f50c64af02971a3886010b9329d63cdf"
+    driverClassName: com.mysql.jdbc.Driver
+    initialSize: 20
+    minIdle: 20
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: "SELECT 1 FROM DUAL"
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: "stat,wall"
+    connectionProperties: "druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000"
+  http:
+    multipart:
+      maxFileSize: 100Mb
+      maxRequestSize: 1000Mb
