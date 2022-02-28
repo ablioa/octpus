@@ -1,0 +1,51 @@
+buildscript{
+    ext{
+    	springBootVersion='2.0.9.RELEASE'
+	    springCloudVersion="Finchley.SR3"
+	    dependencyManagementVersion="1.0.7.RELEASE"
+    }
+
+    repositories{
+        maven {
+            url "http://maven.aliyun.com/nexus/content/repositories/central"
+        }
+	}
+
+    dependencies{
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+apply plugin: org.springframework.boot.gradle.plugin.SpringBootPlugin
+apply plugin: io.spring.gradle.dependencymanagement.DependencyManagementPlugin
+
+dependencyManagement{
+    imports{
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+	    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+repositories{
+    maven {
+        url "http://maven.aliyun.com/nexus/content/repositories/central"
+    }
+
+    mavenLocal()
+}
+
+dependencies {
+    annotationProcessor "org.projectlombok:lombok:1.18.10"
+
+    compile(
+            "org.springframework.boot:spring-boot-configuration-processor",
+            "org.springframework.boot:spring-boot-autoconfigure",
+            "org.springframework.boot:spring-boot-starter-aop",
+            "org.springframework.boot:spring-boot-starter-actuator",
+            "org.codehaus.groovy:groovy-all:2.4.16",
+
+            'org.projectlombok:lombok:1.18.10',
+
+            'io.springfox:springfox-swagger2:2.4.0',
+            'io.springfox:springfox-swagger-ui:2.4.0'
+    )
+}

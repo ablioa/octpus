@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true" scan="true" scanPeriod="1 seconds">
+    <contextName>logback</contextName>
+    <property name="app.name" value="logback_test"/>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} [%file : %line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${app.name}.log</file>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${scheduler.manager.server.home}/logs/${app.name}.%d{yyyy-MM-dd.HH}.log.gz
+            </fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>100MB</maxFileSize>
+        </triggeringPolicy>
+
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} [%file : %line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="stdout"/>
+        <appender-ref ref="file"/>
+    </root>
+
+    <logger name="com.example.logback" level="warn"/>
+
+    <logger name="mytest" level="info" additivity="false">
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <logger name="mytest2" level="info" additivity="false"/>
+</configuration>
