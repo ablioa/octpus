@@ -2,8 +2,6 @@ package org.octpus.mapper.model;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class Mapper {
     private String mid;
@@ -12,7 +10,11 @@ public class Mapper {
 
     private String description;
 
-    private List<MapItem> subject;
+//    private List<MapItem> subject;
+//
+//    private List<MapItem> object;
 
-    private List<MapItem> object;
+    private MappingEntry subject;
+
+    private MappingEntry object;
 }

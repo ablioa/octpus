@@ -29,6 +29,7 @@ public class Nodes {
         String [] pathNodes = item.getPath().split("\\.");
 
         StringBuffer glbCode = new StringBuffer();
+        NodeAttribute parent = null;
         for(int ix = 0; ix < pathNodes.length; ix ++){
             NodeAttribute attribute = new NodeAttribute();
             String fields = pathNodes[ix];
@@ -58,6 +59,9 @@ public class Nodes {
             // TODO 做校验，处理类型冲突
             attributes.put(attribute.getGolbalCode(),attribute);
             attributes.put(attribute.getMapUUID(),attribute);
+
+            attribute.setParent(parent);
+            parent = attribute;
         }
     }
 }

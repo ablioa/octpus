@@ -17,6 +17,8 @@ public class NodeAttribute {
     // TODO 可选
     private String nodeDomainType;
 
+    private NodeAttribute parent;
+
     public  String getMapUUID(){
         return String.format("%s-%d",mid,mindex);
     }

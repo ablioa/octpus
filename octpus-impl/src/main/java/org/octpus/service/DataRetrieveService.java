@@ -27,18 +27,14 @@ public class DataRetrieveService {
     }
 
     public Object retrive(String mid) throws Exception{
-        XlsTemplate template = xlsTemplatePool.getTemplate("MID001");
+        XlsTemplate testData = xlsTemplatePool.getTemplate("MID001");
 
         MapManager mapper = mapperPool.getMapper(mid);
         Assert.notNull(mapper,"映射模板未定义。");
 
-        MapContext mapContext = new MapContext(mapper);
-        List<String> fromPath = mapper.getFrom();
-        for (int ix = 0; ix < fromPath.size(); ix++) {
-            String path = fromPath.get(ix).replace("[]", "");
-            MapHelper.traverse(mapContext, "", "", template, path);
-        }
+        MapContext context = new MapContext(mapper);
+        context.traverse(testData);
 
-        return mapContext.getTarget();
+        return context.getTarget();
     }
 }

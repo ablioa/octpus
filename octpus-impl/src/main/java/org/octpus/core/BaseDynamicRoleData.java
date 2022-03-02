@@ -8,6 +8,7 @@ import groovy.lang.MetaProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.octpus.core.BasePoGo;
 import org.springframework.util.StringUtils;
@@ -16,6 +17,7 @@ import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Slf4j
 @EqualsAndHashCode(callSuper = false)
 @Data
 @JsonIgnoreProperties({"class", "metaClass", "declaringClass"})
