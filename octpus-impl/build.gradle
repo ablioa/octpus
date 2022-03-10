@@ -13,5 +13,6 @@ sourceSets {
 }
 
 dependencies{
+//    implementation files("${rootDir}/libs/real-model.jar")
     compile project(":octpus-domain")
 }

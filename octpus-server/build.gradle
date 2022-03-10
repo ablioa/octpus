@@ -11,6 +11,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
@@ -23,6 +24,6 @@ bootJar{
 }
 
 dependencies{
+//    implementation files("${rootDir}/libs/real-model.jar")
     compile project(":octpus-impl")
 }
-
