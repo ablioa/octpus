@@ -48,7 +48,7 @@ public class TestApp {
             mapperPool.addMapper(mm);
         }
 
-        MapModel mapper = mapperPool.getMapper("M02");
+        MapModel mapper = mapperPool.getMapper("M05");
         Assert.notNull(mapper,"映射模板未定义。");
 
         MapContext context = new MapContext(mapper);

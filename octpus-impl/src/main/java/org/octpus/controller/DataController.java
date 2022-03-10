@@ -35,4 +35,5 @@ public class DataController {
         Object xx = dataRetrieveService.getData();
         return new ResponseEntity<>(xx, HttpStatus.OK);
     }
+
 }

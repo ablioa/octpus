@@ -29,8 +29,6 @@ public class DataRetrieveService {
         Assert.notNull(mapper,"映射模板未定义。");
 
         MapContext context = new MapContext(mapper);
-        context.traverse(testData);
-
-        return null;
+        return context.traverse(testData);
     }
 }
