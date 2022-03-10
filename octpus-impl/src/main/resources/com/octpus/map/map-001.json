@@ -2,7 +2,7 @@
   "mid":"M01",
   "version":"policy",
   "description":"A平台下发",
-  "subject": {
+  "subjects": {
     "domainType": "com.xx.xc.xcxc",
     "items":[
       {"mid":"1","path":"name"},
@@ -14,7 +14,7 @@
       {"mid":"9","path":"attribute.checksum"}
     ]
   },
-  "object":{
+  "objects":{
     "domainType": "com.xx.xc.xcxc",
     "items":[
       {"mid":"1","path":"application"},

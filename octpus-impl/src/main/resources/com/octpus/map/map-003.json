@@ -1,9 +1,8 @@
 {
-  "mid":"M02",
+  "mid":"M03",
   "version":"policy",
   "description":"M02",
-
-  "subject":{
+  "subjects":{
     "domainType": "com.xx.xc.xcxc",
     "items": [
       {"mid":"1","path":"name"},
@@ -19,7 +18,7 @@
       {"mid":"11","path":"entity[].column[].data"}
     ]
   },
-  "object":{
+  "objects":{
     "domainType": "com.xx.xc.xcxc",
     "items":[
       {"mid":"1","path":"application"},

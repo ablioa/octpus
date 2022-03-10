@@ -2,13 +2,13 @@
   "mid":"M02",
   "version":"policy",
   "description":"M02",
-  "subject":{
+  "subjects":{
     "domainType": "aaa.vvv.bbb",
     "items": [
       {"mid":"11","path":"entity[].column[].data"}
     ]
   },
-  "object":{
+  "objects":{
       "domainType": "mmm.qqq.wqw",
       "items":[
       {"mid":"11","path":"data[].field[].data"}

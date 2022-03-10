@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <title>Dynamic Business Model</title>
+
+    <link rel="stylesheet" href="style/jquery.treegrid.css">
+    <link rel="stylesheet" href="style/bootstrap.min.css" />
+
+    <script src="script/jquery.min.js"></script>
+    <script type="text/javascript" src="script/jquery.treegrid.min.js"></script>
+    <script src="script/bootstrap.min.js"></script>
+
+    <style>
+        body {
+            font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, WenQuanYi Micro Hei, Arial, sans-serif;
+            font-size: 1.2em;
+            width: 1280px;
+            margin: 0 auto;
+        }
+
+        /** 覆盖bootstrap的默认设置 */
+        .table>tbody>tr>td,
+        .table>tbody>tr>th,
+        .table>tfoot>tr>td,
+        .table>tfoot>tr>th,
+        .table>thead>tr>td,
+        .table>thead>tr>th {
+            padding: 1px;
+        }
+
+        /* .glyphicon {
+            font-family: none;
+        } */
+
+        .data-node {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #f00;
+        }
+
+        .to-node{
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #008800;
+        }
+    </style>
+</head>
+
+<body>
+    <div class=".container">
+        <table class="tree"></table>
+    </div>
+</body>
+
+<script type="text/javascript">
+    var model = [];
+    var modelMap = {};
+    var parentMap = {};
+
+    // 树节点控制模式
+    var expandNode = undefined;
+
+    function buildLine(nodeModel, parent) {
+        var $line = $('<tr></tr>');
+
+        var $from=$('<td width="40%" data-container="body"><span class="expressionText"><span class="data-node">' + nodeModel.name + '</span>/' + nodeModel.domainType + '</span></td>')
+        $line.append($from);
+
+        var $to=$('<td width="40%" data-container="body"><span class="expressionText"><span class="to-node">' + nodeModel.name + '</span>/' + nodeModel.domainType + '</span></td>')
+        $line.append($to);
+
+        var $tool=$('<td width="20%" style="text-align:right" data-container="body"><a><i class="glyphicon glyphicon-th-list"></i></a>&nbsp;<input type="checkbox" name="vehicle" value="Car" checked="checked" /></td>')
+        $line.append($tool);
+
+        return $line;
+    }
+
+    console.log("xxxx")
+
+    $(function () {
+        function refresh() {
+            if (model.length > 0) {
+                $('#addRoot').hide();
+            } else {
+                $('#addRoot').show();
+            }
+
+            $('.tree').empty();
+            $('.tree').append('<tbody></tbody>')
+
+            function renderNode(nodeModel, parentNodeId) {
+                var curNodeId = (nodeId++);
+                var parent = parentMap[nodeModel.uuid];
+
+                var $line = buildLine(nodeModel);
+                $line.attr('id', nodeModel.uuid);
+                $line.data('model', nodeModel);
+                $line.addClass('treegrid-' + curNodeId);
+                if (parentNodeId != null) {
+                    $line.addClass('treegrid-parent-' + parentNodeId);
+                }
+                $tree.find('tbody').append($line);
+
+                $.each(nodeModel.fields, function (idx, item) {
+                    renderNode(item, curNodeId);
+                });
+            }
+
+            var nodeId = 1;
+            $.each(model, function (idx, item) {
+                renderNode(item);
+            });
+
+            var coreModel = {
+                model: model,
+                modelMap: modelMap,
+                parentMap: parentMap
+            };
+
+            $('body').data('model', coreModel);
+
+            $('.tree').treegrid({
+                'expanderExpandedClass': 'glyphicon glyphicon-minus',
+                'expanderCollapsedClass': 'glyphicon glyphicon-plus',
+                onCollapse: function (yy) {
+                },
+                onExpand: function (xx) {
+                    $('.tree').treegrid("collapse");
+                    $(this).treegrid("expandRecursive");
+                    expandNode = $(this).attr('id');
+                }
+            });
+
+            if (expandNode !== undefined && $('#' + expandNode).length != 0) {
+                $('#' + expandNode).treegrid("collapse");
+            }
+        }
+
+        var $tree = $('.tree');
+        $tree.addClass('table');
+
+        var url = "http://localhost:8000/model/catalog";
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "JSON",
+            success: function (data, textStatus, jqXHR) {
+                model = [];
+                model.push(data);
+                modelMap = {};//data.modelMap;
+                parentMap = {};//data.parentMap;
+
+                $.each(model, function (idx, node) {
+                    rebuild(node, null);
+                });
+
+                refresh();
+            }
+        });
+
+
+        function rebuild(node, parentNode) {
+            var nodeId = node.uuid;
+            if (modelMap[nodeId] != null) {
+                modelMap[nodeId] = node;
+            }
+
+            if (parentMap[nodeId] != null) {
+                parentMap[nodeId] = parentNode;
+            }
+
+            $.each(node.fields, function (idx, child) {
+                rebuild(child, node);
+            })
+        }
+    });
+
+
+</script>
+
+</html>
