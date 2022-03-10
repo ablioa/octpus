@@ -34,30 +34,12 @@ public class MapManager {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getTo(){
-        return mapper.getObject().getItems()
-                .stream()
-                .map(v->v.getPath())
-                .collect(Collectors.toList());
-    }
-
-    public NodeAttribute getSubjectNodeAttributeByPath(String path){
+    // TODO 重构掉丑陋的API
+    public List<NodeAttribute> getSubjectNodeAttributeByPath(String path){
         return fromNodes.getNodeAttribute(path);
-    }
-
-    public NodeAttribute getSubjectNodeAttributeByUUID(String path){
-        return fromNodes.getNodeAttribute(path);
-    }
-
-    public NodeAttribute getObjectNodeAttributeByPath(String uuid){
-        return toNodes.getNodeAttribute(uuid);
     }
 
     public NodeAttribute getObjectNodeAttributeByUUID(String uuid){
-        return toNodes.getNodeAttribute(uuid);
-    }
-
-    public String getObjectUUIDByPath(String path){
-        return toNodes.getNodeAttribute(path).getMapUUID();
+        return toNodes.getNodeAttributeByUUID(uuid);
     }
 }

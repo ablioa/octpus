@@ -19,7 +19,11 @@ public class NodeAttribute {
 
     private NodeAttribute parent;
 
-    public  String getMapUUID(){
-        return String.format("%s-%d",mid,mindex);
+    private NodeAttribute root;
+
+    private NodeAttribute child;
+
+    public  String getUuid(){
+        return String.format("%s.%d",mid,mindex);
     }
 }

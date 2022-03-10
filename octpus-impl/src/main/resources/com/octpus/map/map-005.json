@@ -5,12 +5,22 @@
   "subject":{
     "domainType": "aaa.vvv.bbb",
     "items": [
+      {"mid":"1","path":"name"},
+      {"mid":"2","path":"subSystem"},
+      {"mid":"3","path":"attribute.vendor"},
+      {"mid":"4","path":"attribute.log[].content"},
+      {"mid":"5","path":"attribute.log[].data"},
       {"mid":"11","path":"entity[].column[].data"}
     ]
   },
   "object":{
       "domainType": "mmm.qqq.wqw",
       "items":[
-      {"mid":"11","path":"data[].field[].data"}
+        {"mid":"1","path":"application"},
+        {"mid":"2","path":"module"},
+        {"mid":"3","path":"head.source"},
+        {"mid":"4","path":"head.version[].target"},
+        {"mid":"5","path":"head.version[].text"},
+        {"mid":"11","path":"data[].field[].content"}
   ]}
 }

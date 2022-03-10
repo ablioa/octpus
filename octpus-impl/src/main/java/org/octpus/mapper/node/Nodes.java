@@ -4,19 +4,28 @@ import lombok.Data;
 import org.octpus.mapper.model.MapItem;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 @Data
 public class Nodes {
-    private Map<String,NodeAttribute> attributes;
+    private Map<String,List<NodeAttribute>> attributes;
+
+    private Map <String,NodeAttribute> cachedAttribute;
 
     public Nodes(){
         attributes = new LinkedHashMap<>();
+        cachedAttribute = new LinkedHashMap<>();
     }
 
-    public NodeAttribute getNodeAttribute(String code){
+    // TODO 重构掉丑陋的API
+    public List<NodeAttribute> getNodeAttribute(String code){
         return attributes.get(code);
+    }
+
+    public NodeAttribute getNodeAttributeByUUID(String code){
+        return cachedAttribute.get(code);
     }
 
     public void parse(List<MapItem> from){
@@ -30,6 +39,7 @@ public class Nodes {
 
         StringBuffer glbCode = new StringBuffer();
         NodeAttribute parent = null;
+        NodeAttribute root = new NodeAttribute();
         for(int ix = 0; ix < pathNodes.length; ix ++){
             NodeAttribute attribute = new NodeAttribute();
             String fields = pathNodes[ix];
@@ -57,10 +67,25 @@ public class Nodes {
             attribute.setGolbalCode(glbCode.toString());
 
             // TODO 做校验，处理类型冲突
-            attributes.put(attribute.getGolbalCode(),attribute);
-            attributes.put(attribute.getMapUUID(),attribute);
+            List<NodeAttribute> nl = attributes.get(attribute.getGolbalCode());
+            if(nl == null){
+                nl = new LinkedList<>();
+            }
+            nl.add(attribute);
+
+            attributes.put(attribute.getGolbalCode(),nl);
+//            attributes.put(attribute.getUuid(),attribute);
+
+            cachedAttribute.put(attribute.getUuid(),attribute);
 
             attribute.setParent(parent);
+            if(parent == null){
+                root = attribute;
+            }else{
+                parent.setChild(attribute);
+            }
+
+            attribute.setRoot(root);
             parent = attribute;
         }
     }

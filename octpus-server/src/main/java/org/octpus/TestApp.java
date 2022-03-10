@@ -15,9 +15,24 @@ import org.springframework.util.Assert;
 import javax.xml.bind.JAXB;
 
 public class TestApp {
-    public static void main(String [] args) throws Exception{
-        XlsTemplatePool xlsTemplatePool = new XlsTemplatePool();
 
+    public static XlsTemplate loadFromJson() throws Exception{
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        Resource[] ss = resolver.getResources("com/octpus/mapping/demo.json");
+        if(ss.length <= 0){
+            throw new Exception("文件不存在.");
+        }
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        XlsTemplate data = objectMapper.readValue(ss[0].getInputStream(), XlsTemplate.class);
+
+//        System.out.println("data:" + objectMapper.writeValueAsString(data));
+
+        return  data;
+    }
+
+    public static void testTransform() throws Exception{
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
@@ -25,13 +40,6 @@ public class TestApp {
 
         // 装载测试数据
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource[] ss = resolver.getResources("com/octpus/mapping/import.mapping.*.xml");
-        for (Resource rs : ss) {
-            XlsTemplate template = JAXB.unmarshal(rs.getInputStream(), XlsTemplate.class);
-            xlsTemplatePool.addTemplate(template);
-        }
-
-        // 装载映射模板数据
         Resource[] mapperResources = resolver.getResources("com/octpus/map/map-005.json");
         for (Resource rs : mapperResources) {
             Mapper mapper= objectMapper.readValue(rs.getInputStream(), Mapper.class);
@@ -43,13 +51,16 @@ public class TestApp {
             mapperPool.addMapper(mm);
         }
 
-        XlsTemplate testData = xlsTemplatePool.getTemplate("MID001");
         MapManager mapper = mapperPool.getMapper("M02");
         Assert.notNull(mapper,"映射模板未定义。");
 
         MapContext context = new MapContext(mapper);
-        context.traverse(testData);
+        context.traverse(loadFromJson());
 
         System.out.println(objectMapper.writeValueAsString(context.getTarget()));
+    }
+
+    public static void main(String [] args) throws Exception{
+        testTransform();
     }
 }

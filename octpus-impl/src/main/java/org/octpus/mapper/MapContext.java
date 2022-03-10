@@ -2,8 +2,6 @@ package org.octpus.mapper;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.codehaus.groovy.util.StringUtil;
 import org.octpus.core.BaseDynamicRoleData;
 import org.octpus.mapper.node.NodeAttribute;
 import org.octpus.mapper.node.NodeType;
@@ -12,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Data
@@ -24,8 +23,6 @@ public class MapContext {
 
     private Map<String,Object> nodePath;
 
-    private Map<String,Integer> nodeIndex;
-
     public MapContext(MapManager mapManager){
         this.mapManager = mapManager;
 
@@ -33,84 +30,146 @@ public class MapContext {
         target = new BaseDynamicRoleData();
         nodePath = new HashMap<>();
 
-        nodeIndex = new HashMap<>();
-
         nodePath.put("",target);
-    }
-
-    public String getRealCode(String uuid){
-        NodeAttribute na = mapManager.getToNodes().getNodeAttribute(uuid);
-        String realCode = na.getCode();
-
-        if(na.getNodeType() == NodeType.VECTOR){
-            realCode = String.format("%s[%d]",na.getCode(),indexCounter.get(na.getMapUUID()));
-        }
-
-        return realCode;
-    }
-
-    public String getIndex(String uuid){
-        NodeAttribute na = mapManager.getToNodes().getNodeAttribute(uuid);
-
-        String rgcode = getRealCode(uuid);
-        while(na.getParent() != null){
-            NodeAttribute parent = na.getParent();
-            rgcode = getRealCode(parent.getMapUUID())+"."+rgcode;
-            na = na.getParent();
-        }
-
-        return rgcode;
+        target.setProperty("########-parent############","xxx");
     }
 
     public Object traverse(Object data) throws Exception{
         List<String> fromPath = mapManager.getFrom();
         for (int ix = 0; ix < fromPath.size(); ix++) {
             String path = fromPath.get(ix).replace("[]", "");
-            MapHelper.traverse(this, "", data, path);
+            MapHelper.traverse(path,this, "", data, path);
         }
 
         return this.getTarget();
     }
 
-    /**
-     * 查询路径对应节点的实时下标
-     * @param path
-     * @return
-     */
-    public Integer getIndexCounter(String path){
-        String uid = getObjectUUIDByPath(path);
-        return indexCounter.get(uid);
-    }
+    // TODO 重构掉丑陋的API
+    public NodeAttribute getSubjectNodeAttribute(String absoluetPath,String cpath){
+        List<NodeAttribute> tlist = mapManager.getFromNodes().getAttributes().get(absoluetPath);
+        List<NodeAttribute> list = mapManager.getSubjectNodeAttributeByPath(cpath);
 
-    public String getObjectUUIDByPath(String path){
-        return mapManager.getObjectUUIDByPath(path);
-    }
+        List<NodeAttribute> ls = tlist.stream()
+                .filter(v->v.getGolbalCode().equals(absoluetPath))
+                .collect(Collectors.toList());
+        String mid = ls.get(0).getMid();
 
-    public NodeAttribute getSubjectNodeAttribute(String cpath){
-        return mapManager.getSubjectNodeAttributeByPath(cpath);
+        List<NodeAttribute> res = list.stream()
+                .filter(v->v.getMid().equals(mid) && v.getGolbalCode().equals(cpath))
+                .collect(Collectors.toList());
+
+        return res.get(0);
     }
 
     public NodeAttribute getObjectNodeAttribute(String uuid){
         return mapManager.getObjectNodeAttributeByUUID(uuid);
     }
 
-    public Object getNodeValue(String key1,int type){
-        String key = getIndex(key1);
-        if(StringUtils.isEmpty(key)){
-            nodePath.put(key,target);
-            return target;
+    public String getRealCode(String uuid){
+        NodeAttribute na = mapManager.getToNodes().getNodeAttributeByUUID(uuid);
+        String realCode = na.getCode();
+
+        if(na.getNodeType() == NodeType.VECTOR){
+            realCode = String.format("%s[%d]",na.getCode(),indexCounter.get(na.getUuid()));
         }
 
-        Object mnode = nodePath.get(key);
-        if(mnode == null){
-            if(type==0) {
-                mnode = new BaseDynamicRoleData();
-            }else{
-                mnode = new LinkedList<Object>();
-                nodePath.put(key,mnode);
-//                log.info("未命中: {}",key);
-            }
+        return realCode;
+    }
+
+    public String getIndex(String uuid){
+        NodeAttribute na = mapManager.getToNodes().getNodeAttributeByUUID(uuid);
+
+        String rgcode = getRealCode(uuid);
+        while(na.getParent() != null){
+            NodeAttribute parent = na.getParent();
+            rgcode = getRealCode(parent.getUuid())+"."+rgcode;
+            na = na.getParent();
         }
-        return mnode;
+
+        return rgcode;
+    }
+
+    public Object addNode(String uuid,Object object) throws Exception{
+        NodeAttribute na = mapManager.getToNodes().getNodeAttributeByUUID(uuid);
+        NodeAttribute currentNode = na.getRoot();
+
+        Object parentObject = target;
+        do{
+
+            switch (currentNode.getNodeType()){
+                case VECTOR:{
+                    if(parentObject instanceof BaseDynamicRoleData){
+                        BaseDynamicRoleData pObj = (BaseDynamicRoleData) parentObject;
+                        Object subObject = pObj.getProperty(currentNode.getCode());
+                        if(subObject == null){
+                            subObject = new LinkedList<>(); //
+                            pObj.setProperty(currentNode.getCode(),subObject);
+                        }
+
+                        List<Object> listObject = (List<Object>)subObject;
+                        Integer index = getIndexCounter().get(currentNode.getUuid());
+                        while (index +1 > listObject.size()){
+                            listObject.add(new BaseDynamicRoleData());
+                        }
+                        parentObject = listObject.get(index);
+
+                    }else if(parentObject instanceof List){
+                        List<Object> listObject = (List<Object>)parentObject;
+                        Integer index = getIndexCounter().get(currentNode.getUuid());
+                        while (index +1 >= listObject.size()){
+                            listObject.add(new BaseDynamicRoleData());
+                        }
+
+                        parentObject = listObject.get(index);
+                    }
+                    break;
+                }
+
+                case SCARLAR:{
+                    if(parentObject instanceof BaseDynamicRoleData){
+                        BaseDynamicRoleData pObj = (BaseDynamicRoleData) parentObject;
+                        Object subObject = pObj.getProperty(currentNode.getCode());
+                        if(subObject == null){
+                            pObj.setProperty(currentNode.getCode(),new BaseDynamicRoleData());
+                        }
+                        parentObject = pObj.getProperty(currentNode.getCode());
+                    }else if(parentObject instanceof List){
+                        List<Object> listObject = (List<Object>)parentObject;
+                        Integer index = getIndexCounter().get(currentNode.getUuid());
+                        while (index +1 > listObject.size()){
+                            listObject.add(new BaseDynamicRoleData());
+                        }
+
+                        parentObject = listObject.get(index);
+                    }
+
+                    break;
+                }
+
+                case PREMITIVE:{
+                    if(parentObject instanceof BaseDynamicRoleData){
+                        BaseDynamicRoleData pObj = (BaseDynamicRoleData) parentObject;
+                        Object subObject = pObj.getProperty(currentNode.getCode());
+                        if(subObject == null){
+                            pObj.setProperty(currentNode.getCode(),object);
+                        }
+                        parentObject = pObj.getProperty(currentNode.getCode());
+                    }else if(parentObject instanceof List){
+                        List<Object> listObject = (List<Object>)parentObject;
+                        Integer index = getIndexCounter().get(currentNode.getUuid());
+                        while (index +1 > listObject.size()){
+                            listObject.add(object);
+                        }
+
+                        parentObject = listObject.get(index);
+                    }
+                    break;
+                }
+            }
+
+            currentNode = currentNode.getChild();
+        }while (currentNode!= null && !currentNode.getUuid().equals(uuid));
+
+        return parentObject;
     }
 }
