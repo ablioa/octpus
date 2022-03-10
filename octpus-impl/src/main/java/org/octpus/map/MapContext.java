@@ -4,8 +4,10 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.octpus.core.BaseDynamicRoleData;
+import org.octpus.map.config.MapConverter;
 import org.octpus.map.node.MapModel;
 import org.octpus.map.node.Node;
+import org.octpus.map.utils.FactorScriptExecutor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -121,7 +123,11 @@ public class MapContext {
                         BaseDynamicRoleData pObj = (BaseDynamicRoleData) parentObject;
                         Object subObject = pObj.getProperty(currentNode.getCode());
                         if (subObject == null) {
-                            pObj.setProperty(currentNode.getCode(), object);
+                            Object nvalue = object;
+                            if(currentNode.getConverter() != null){
+                                nvalue = transformValue(currentNode.getConverter(),object);
+                            }
+                            pObj.setProperty(currentNode.getCode(), nvalue);
                         }
                         parentObject = pObj.getProperty(currentNode.getCode());
                     } else if (parentObject instanceof List) {
@@ -133,6 +139,8 @@ public class MapContext {
 
                         parentObject = listObject.get(index);
                     }
+
+
                     break;
                 }
             }
@@ -141,5 +149,30 @@ public class MapContext {
         } while (currentNode != null);
 
         return parentObject;
+    }
+
+    public Object transformValue(MapConverter converter,Object input){
+        Object result = input;
+        switch (converter.getMethod()){
+            case "C0001":{
+                result = converter.getTable().getTable().get(input);
+                if(result == null){
+                    result = converter.getTable().getDefaultValue();
+                }
+                log.info("查表转换:{},{}",input,result);
+                break;
+            }
+            case "C0002":{
+                log.info("执行脚本:{}",input);
+                result = FactorScriptExecutor.execute(converter.getGroovy(),input);
+                break;
+            }
+            case "C0003":{
+                log.info("执行Beean:{}",input);
+                break;
+            }
+        }
+
+        return result;
     }
 }

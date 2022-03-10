@@ -11,12 +11,12 @@
     "log": [
       {
         "time": "2022-01-01 11:00:00",
-        "content": "创建",
+        "content": "A001",
         "data": "hello,world"
       },
       {
         "time": "2022-01-01 13:00:00",
-        "content": "更新",
+        "content": "A002",
         "data": "hello,world"
       }
     ]
@@ -82,7 +82,7 @@
           "column": 4,
           "type": "string",
           "domainType": null,
-          "data": "12132",
+          "data": "A002",
           "mandatory": true,
           "extRow": false,
           "desc": null,
@@ -93,7 +93,7 @@
           "column": 5,
           "type": "string",
           "domainType": null,
-          "data": "65656",
+          "data": "A001",
           "mandatory": true,
           "extRow": false,
           "desc": null,

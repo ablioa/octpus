@@ -1,6 +1,7 @@
 package org.octpus.map.node;
 
 import lombok.Data;
+import org.octpus.map.config.MapConverter;
 
 @Data
 public class Node {
@@ -13,6 +14,8 @@ public class Node {
     private String mid;
 
     private Integer mindex;
+
+    private MapConverter converter;
 
     // TODO 可选
     private String nodeDomainType;

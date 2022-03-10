@@ -8,5 +8,6 @@ public class MapItem {
 
     private String mid;
 
+    private MapConverter converter;
     // TODO 添加转换规则，映射脚本，聚合函数等。
 }

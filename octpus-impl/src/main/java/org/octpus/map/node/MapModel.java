@@ -65,6 +65,7 @@ public class MapModel {
 
             if(ix == pathNodes.length -1){
                 attribute.setNodeType(NodeType.PREMITIVE);
+                attribute.setConverter(item.getConverter());
             }
 
             if(glbCode.length() != 0){
