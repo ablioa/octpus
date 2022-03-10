@@ -3,15 +3,11 @@ package org.octpus.service;
 import com.octpus.facility.XlsTemplatePool;
 import com.octpus.model.XlsTemplate;
 import lombok.extern.java.Log;
-import org.octpus.mapper.MapContext;
-import org.octpus.mapper.MapHelper;
-import org.octpus.mapper.MapManager;
-import org.octpus.mapper.model.MapperPool;
+import org.octpus.map.MapContext;
+import org.octpus.map.node.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.util.List;
 
 @Log
 @Component
@@ -20,7 +16,7 @@ public class DataRetrieveService {
     private XlsTemplatePool xlsTemplatePool;
 
     @Autowired
-    private MapperPool mapperPool;
+    private SystemMapping mapperPool;
 
     public Object getData(){
         return xlsTemplatePool.getTemplate("MID001");
@@ -29,12 +25,12 @@ public class DataRetrieveService {
     public Object retrive(String mid) throws Exception{
         XlsTemplate testData = xlsTemplatePool.getTemplate("MID001");
 
-        MapManager mapper = mapperPool.getMapper(mid);
+        MapModel mapper = mapperPool.getMapper(mid);
         Assert.notNull(mapper,"映射模板未定义。");
 
         MapContext context = new MapContext(mapper);
         context.traverse(testData);
 
-        return context.getTarget();
+        return null;
     }
 }

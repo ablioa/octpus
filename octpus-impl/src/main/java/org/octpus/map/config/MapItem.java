@@ -1,4 +1,4 @@
-package org.octpus.mapper.model;
+package org.octpus.map.config;
 
 import lombok.Data;
 

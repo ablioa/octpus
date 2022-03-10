@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.octpus.facility.XlsTemplatePool;
 import com.octpus.model.XlsTemplate;
 import lombok.extern.slf4j.Slf4j;
-import org.octpus.mapper.MapManager;
-import org.octpus.mapper.model.Mapper;
-import org.octpus.mapper.model.MapperPool;
+import org.octpus.map.node.MapModel;
+import org.octpus.map.config.MapConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
@@ -32,7 +31,7 @@ public class BeanBootStrap implements CommandLineRunner {
     private XlsTemplatePool xlsTemplatePool;
 
     @Autowired
-    private MapperPool mapperPool;
+    private SystemMapping mapperPool;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -51,13 +50,13 @@ public class BeanBootStrap implements CommandLineRunner {
         // 装载映射模板数据
         Resource[] mapperResources = resolver.getResources("com/octpus/map/map-*.json");
         for (Resource rs : mapperResources) {
-            Mapper mapper= objectMapper.readValue(rs.getInputStream(), Mapper.class);
+            MapConfiguration mapper= objectMapper.readValue(rs.getInputStream(), MapConfiguration.class);
             log.info("装载映射模板:{}", mapper);
 
 //            Mapper mapper = mapperPool.getMapper(mid);
-            MapManager mm = new MapManager();
-            mm.setMapper(mapper);
-            mm.buildContext();
+            MapModel mm = new MapModel();
+            mm.setConfiguration(mapper);
+            mm.init();
 
             mapperPool.addMapper(mm);
         }

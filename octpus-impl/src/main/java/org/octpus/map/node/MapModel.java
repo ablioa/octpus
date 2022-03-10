@@ -1,47 +1,57 @@
-package org.octpus.mapper.node;
+package org.octpus.map.node;
 
 import lombok.Data;
-import org.octpus.mapper.model.MapItem;
+import org.octpus.map.config.MapConfiguration;
+import org.octpus.map.config.MapItem;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 @Data
-public class Nodes {
-    private Map<String,List<NodeAttribute>> attributes;
+public class MapModel {
+    private MapConfiguration configuration;
 
-    private Map <String,NodeAttribute> cachedAttribute;
+    private Map<String, Node> subjectNodes;
 
-    public Nodes(){
-        attributes = new LinkedHashMap<>();
-        cachedAttribute = new LinkedHashMap<>();
+    private Map<String, Node> objectNodes;
+
+    private List<Node> subjectTree;
+
+    public void init(){
+        // TODO 添加校验规则，校验映射数量和类型
+        // ...
+
+        subjectNodes = parse(configuration.getSubjects().getItems());
+        objectNodes = parse(configuration.getObjects().getItems());
+
+        subjectTree = new LinkedList<>();
+        subjectNodes.forEach((k,v)->{
+            if(v.getParent() == null){
+                subjectTree.add(v);
+            }
+        });
     }
 
-    // TODO 重构掉丑陋的API
-    public List<NodeAttribute> getNodeAttribute(String code){
-        return attributes.get(code);
-    }
-
-    public NodeAttribute getNodeAttributeByUUID(String code){
-        return cachedAttribute.get(code);
-    }
-
-    public void parse(List<MapItem> from){
+    public Map<String, Node> parse(List<MapItem> from){
+        Map<String, Node>  cachedAttribute = new HashMap<>();
         for (MapItem item : from){
-            parseNodes(item);
+            parseNodes(cachedAttribute,item);
         }
+
+        return cachedAttribute;
     }
 
-    public void parseNodes(MapItem item){
+    public void parseNodes(Map<String, Node>  cachedAttribute, MapItem item){
+
         String [] pathNodes = item.getPath().split("\\.");
 
         StringBuffer glbCode = new StringBuffer();
-        NodeAttribute parent = null;
-        NodeAttribute root = new NodeAttribute();
+        Node parent = null;
+        Node root = new Node();
         for(int ix = 0; ix < pathNodes.length; ix ++){
-            NodeAttribute attribute = new NodeAttribute();
+            Node attribute = new Node();
             String fields = pathNodes[ix];
             String code = fields;
             if(fields.endsWith("[]")){
@@ -67,13 +77,13 @@ public class Nodes {
             attribute.setGolbalCode(glbCode.toString());
 
             // TODO 做校验，处理类型冲突
-            List<NodeAttribute> nl = attributes.get(attribute.getGolbalCode());
-            if(nl == null){
-                nl = new LinkedList<>();
-            }
-            nl.add(attribute);
+//            List<NodeAttribute> nl = attributes.get(attribute.getGolbalCode());
+//            if(nl == null){
+//                nl = new LinkedList<>();
+//            }
+//            nl.add(attribute);
 
-            attributes.put(attribute.getGolbalCode(),nl);
+//            attributes.put(attribute.getGolbalCode(),nl);
 //            attributes.put(attribute.getUuid(),attribute);
 
             cachedAttribute.put(attribute.getUuid(),attribute);

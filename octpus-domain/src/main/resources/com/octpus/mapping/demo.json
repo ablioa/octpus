@@ -34,7 +34,7 @@
       "column": [
         {
           "name": null,
-          "column": 0,
+          "column": 1,
           "type": "string",
           "domainType": null,
           "data": "ec-001",
@@ -45,7 +45,7 @@
         },
         {
           "name": null,
-          "column": 0,
+          "column": 2,
           "type": "string",
           "domainType": null,
           "data": "ec-002",
@@ -56,7 +56,7 @@
         },
         {
           "name": null,
-          "column": 0,
+          "column": 3,
           "type": "string",
           "domainType": null,
           "data": "ec-003",
@@ -79,7 +79,7 @@
       "column": [
         {
           "name": null,
-          "column": 0,
+          "column": 4,
           "type": "string",
           "domainType": null,
           "data": "12132",
@@ -90,7 +90,7 @@
         },
         {
           "name": null,
-          "column": 0,
+          "column": 5,
           "type": "string",
           "domainType": null,
           "data": "65656",

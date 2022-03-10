@@ -1,9 +1,9 @@
-package org.octpus.mapper.node;
+package org.octpus.map.node;
 
 import lombok.Data;
 
 @Data
-public class NodeAttribute {
+public class Node {
     private NodeType nodeType;
 
     private String code;
@@ -17,11 +17,11 @@ public class NodeAttribute {
     // TODO 可选
     private String nodeDomainType;
 
-    private NodeAttribute parent;
+    private Node parent;
 
-    private NodeAttribute root;
+    private Node root;
 
-    private NodeAttribute child;
+    private Node child;
 
     public  String getUuid(){
         return String.format("%s.%d",mid,mindex);

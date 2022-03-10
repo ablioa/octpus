@@ -2,17 +2,14 @@ package org.octpus;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.octpus.facility.XlsTemplatePool;
 import com.octpus.model.XlsTemplate;
-import org.octpus.mapper.MapContext;
-import org.octpus.mapper.MapManager;
-import org.octpus.mapper.model.Mapper;
-import org.octpus.mapper.model.MapperPool;
+import org.octpus.map.MapContext;
+import org.octpus.map.node.MapModel;
+import org.octpus.map.config.MapConfiguration;
+import org.octpus.service.SystemMapping;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
-
-import javax.xml.bind.JAXB;
 
 public class TestApp {
 
@@ -36,28 +33,26 @@ public class TestApp {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        MapperPool mapperPool = new MapperPool();
+        SystemMapping mapperPool = new SystemMapping();
 
         // 装载测试数据
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] mapperResources = resolver.getResources("com/octpus/map/map-005.json");
         for (Resource rs : mapperResources) {
-            Mapper mapper= objectMapper.readValue(rs.getInputStream(), Mapper.class);
+            MapConfiguration mapper= objectMapper.readValue(rs.getInputStream(), MapConfiguration.class);
 
-            MapManager mm = new MapManager();
-            mm.setMapper(mapper);
-            mm.buildContext();
+            MapModel mm = new MapModel();
+            mm.setConfiguration(mapper);
+            mm.init();
 
             mapperPool.addMapper(mm);
         }
 
-        MapManager mapper = mapperPool.getMapper("M02");
+        MapModel mapper = mapperPool.getMapper("M02");
         Assert.notNull(mapper,"映射模板未定义。");
 
         MapContext context = new MapContext(mapper);
-        context.traverse(loadFromJson());
-
-        System.out.println(objectMapper.writeValueAsString(context.getTarget()));
+        System.out.println(objectMapper.writeValueAsString(context.traverse(loadFromJson())));
     }
 
     public static void main(String [] args) throws Exception{

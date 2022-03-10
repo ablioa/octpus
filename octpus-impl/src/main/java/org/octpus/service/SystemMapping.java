@@ -1,0 +1,24 @@
+package org.octpus.service;
+
+import lombok.Data;
+import org.octpus.map.node.MapModel;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+@Data
+public class SystemMapping {
+    private Map<String, MapModel> maps;
+
+    public SystemMapping(){
+        maps = new LinkedHashMap<>();
+    }
+
+    public void addMapper(MapModel mapper){
+        maps.put(mapper.getConfiguration().getMid(),mapper);
+    }
+
+    public MapModel getMapper(String mid){
+        return maps.get(mid);
+    }
+}

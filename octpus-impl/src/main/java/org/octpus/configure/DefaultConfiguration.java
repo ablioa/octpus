@@ -3,7 +3,7 @@ package org.octpus.configure;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.octpus.facility.XlsTemplatePool;
-import org.octpus.mapper.model.MapperPool;
+import org.octpus.service.SystemMapping;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -23,8 +23,8 @@ public class DefaultConfiguration {
     }
 
     @Bean
-    public MapperPool getModelManager(){
-        return new MapperPool();
+    public SystemMapping getModelManager(){
+        return new SystemMapping();
     }
 
     @Bean

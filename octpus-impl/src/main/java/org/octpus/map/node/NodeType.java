@@ -1,4 +1,4 @@
-package org.octpus.mapper.node;
+package org.octpus.map.node;
 
 /**
  * 映射节点数据类型

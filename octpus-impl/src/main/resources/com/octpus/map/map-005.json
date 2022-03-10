@@ -2,7 +2,7 @@
   "mid":"M02",
   "version":"policy",
   "description":"M02",
-  "subject":{
+  "subjects":{
     "domainType": "aaa.vvv.bbb",
     "items": [
       {"mid":"1","path":"name"},
@@ -10,10 +10,12 @@
       {"mid":"3","path":"attribute.vendor"},
       {"mid":"4","path":"attribute.log[].content"},
       {"mid":"5","path":"attribute.log[].data"},
-      {"mid":"11","path":"entity[].column[].data"}
+      {"mid":"6","path":"entity[].name"},
+      {"mid":"11","path":"entity[].column[].data"},
+      {"mid":"12","path":"entity[].column[].column"}
     ]
   },
-  "object":{
+  "objects":{
       "domainType": "mmm.qqq.wqw",
       "items":[
         {"mid":"1","path":"application"},
@@ -21,6 +23,9 @@
         {"mid":"3","path":"head.source"},
         {"mid":"4","path":"head.version[].target"},
         {"mid":"5","path":"head.version[].text"},
-        {"mid":"11","path":"data[].field[].content"}
-  ]}
+        {"mid":"6","path":"data[].title"},
+        {"mid":"11","path":"data[].field[].xxx"},
+        {"mid":"12","path":"data[].field[].yy"},
+        {"mid":"14","path":"lang.type"}
+      ]}
 }
