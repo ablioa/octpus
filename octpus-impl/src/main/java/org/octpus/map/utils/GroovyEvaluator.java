@@ -1,7 +1,6 @@
 package org.octpus.map.utils;
 
 import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.springframework.util.StringUtils;
 
@@ -59,21 +58,5 @@ public class GroovyEvaluator {
             script.setBinding(binding);
             return script.run();
         }
-    }
-}
-
-class GroovyScriptCachingBuilder {
-    private GroovyShell shell = new GroovyShell();
-    private Map<String, Script> scripts = new HashMap<>();
-
-    public Script getScript(final String expression) {
-        Script script;
-        if (scripts.containsKey(expression)) {
-            script = scripts.get(expression);
-        } else {
-            script = shell.parse(expression);
-            scripts.put(expression, script);
-        }
-        return script;
     }
 }

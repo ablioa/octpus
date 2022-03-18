@@ -4,7 +4,7 @@ import com.octpus.model.XlsTemplate;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.octpus.service.ModelDefinitionHelper;
+import org.octpus.inspect.inspect.ModelDefinitionHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

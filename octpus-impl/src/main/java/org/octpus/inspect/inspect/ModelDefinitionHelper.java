@@ -1,4 +1,4 @@
-package org.octpus.service;
+package org.octpus.inspect.inspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.octpus.inspect.core.NodeDescriptor;
@@ -50,8 +50,6 @@ public class ModelDefinitionHelper {
                 root.getFields().add(retrieve(field.getName(), field.getType()));
             }
         }
-
-        log.info("running ...");
 
         return root;
     }

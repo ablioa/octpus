@@ -2,6 +2,10 @@ package org.octpus.map.config;
 
 import lombok.Data;
 
+/**
+ * 映射字段定义
+ * @author wangzh
+ */
 @Data
 public class MapItem {
     private String path;

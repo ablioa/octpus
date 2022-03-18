@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.octpus.model.XlsTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.octpus.inspect.core.NodeDescriptor;
-import org.octpus.service.ModelDefinitionHelper;
+import org.octpus.inspect.inspect.ModelDefinitionHelper;
 
 @Slf4j
 public class TestDescribe {

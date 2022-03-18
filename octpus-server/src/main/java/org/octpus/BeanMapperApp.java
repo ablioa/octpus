@@ -3,15 +3,15 @@ package org.octpus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.octpus.model.XlsTemplate;
-import org.octpus.map.MapContext;
-import org.octpus.map.node.MapModel;
+import org.octpus.map.BeanMapContext;
 import org.octpus.map.config.MapConfiguration;
+import org.octpus.map.node.MapModel;
 import org.octpus.service.SystemMapping;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
-public class TestApp {
+public class BeanMapperApp {
 
     public static XlsTemplate loadFromJson() throws Exception{
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
@@ -24,8 +24,6 @@ public class TestApp {
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         XlsTemplate data = objectMapper.readValue(ss[0].getInputStream(), XlsTemplate.class);
 
-//        System.out.println("data:" + objectMapper.writeValueAsString(data));
-
         return  data;
     }
 
@@ -37,7 +35,7 @@ public class TestApp {
 
         // 装载测试数据
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource[] mapperResources = resolver.getResources("com/octpus/map/map-005.json");
+        Resource[] mapperResources = resolver.getResources("com/octpus/map/map-007.json");
         for (Resource rs : mapperResources) {
             MapConfiguration mapper= objectMapper.readValue(rs.getInputStream(), MapConfiguration.class);
 
@@ -48,10 +46,10 @@ public class TestApp {
             mapperPool.addMapper(mm);
         }
 
-        MapModel mapper = mapperPool.getMapper("M05");
+        MapModel mapper = mapperPool.getMapper("M07");
         Assert.notNull(mapper,"映射模板未定义。");
 
-        MapContext context = new MapContext(mapper);
+        BeanMapContext context = new BeanMapContext(mapper);
         System.out.println(objectMapper.writeValueAsString(context.traverse(loadFromJson())));
     }
 

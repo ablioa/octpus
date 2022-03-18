@@ -4,6 +4,10 @@ import lombok.Data;
 
 import java.util.Map;
 
+/**
+ * 转码映射定义
+ * @author wangzh
+ */
 @Data
 public class MapValueTable {
     private Map<String,String> table;

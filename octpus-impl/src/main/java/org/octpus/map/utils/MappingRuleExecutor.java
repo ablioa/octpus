@@ -2,7 +2,7 @@ package org.octpus.map.utils;
 
 import org.springframework.util.StringUtils;
 
-public class FactorScriptExecutor {
+public class MappingRuleExecutor {
     public static Object execute(String script,Object input) {
         String name="xxx";
         Object result = null;

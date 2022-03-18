@@ -1,6 +1,5 @@
 package org.octpus.map;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.octpus.core.BaseDynamicRoleData;
@@ -16,19 +15,25 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Data
-public class MapContext {
+public class BeanMapContext {
     private MapModel model;
 
     private Map<String, Integer> indexCounter;
 
-    public MapContext(MapModel model) {
+    public BeanMapContext(MapModel model) {
         this.model = model;
         indexCounter = new HashMap<>();
     }
 
+    public Object buildTargetObject(String clzName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+
+        Class clz = Class.forName(clzName);
+        return clz.newInstance();
+    }
+
     public Object traverse(Object data) throws Exception {
-        BaseDynamicRoleData target = new BaseDynamicRoleData();
+        String clazzName = model.getConfiguration().getObjects().getDomainType();
+        Object target = buildTargetObject(clazzName);
         List<Node> attributes = model.getSubjectTree();
 
         for(Node na : attributes){
@@ -79,7 +84,7 @@ public class MapContext {
                         }
 
                         List<Object> listObject = (List<Object>) subObject;
-                        Integer index = getIndexCounter().get(currentNode.getUuid());
+                        Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 > listObject.size()) {
                             listObject.add(new BaseDynamicRoleData());
                         }
@@ -87,7 +92,7 @@ public class MapContext {
 
                     } else if (parentObject instanceof List) {
                         List<Object> listObject = (List<Object>) parentObject;
-                        Integer index = getIndexCounter().get(currentNode.getUuid());
+                        Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 >= listObject.size()) {
                             listObject.add(new BaseDynamicRoleData());
                         }
@@ -107,7 +112,7 @@ public class MapContext {
                         parentObject = pObj.getProperty(currentNode.getCode());
                     } else if (parentObject instanceof List) {
                         List<Object> listObject = (List<Object>) parentObject;
-                        Integer index = getIndexCounter().get(currentNode.getUuid());
+                        Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 > listObject.size()) {
                             listObject.add(new BaseDynamicRoleData());
                         }
@@ -132,14 +137,13 @@ public class MapContext {
                         parentObject = pObj.getProperty(currentNode.getCode());
                     } else if (parentObject instanceof List) {
                         List<Object> listObject = (List<Object>) parentObject;
-                        Integer index = getIndexCounter().get(currentNode.getUuid());
+                        Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 > listObject.size()) {
                             listObject.add(object);
                         }
 
                         parentObject = listObject.get(index);
                     }
-
 
                     break;
                 }
@@ -160,7 +164,7 @@ public class MapContext {
      * @param input
      * @return
      */
-    public Object transformValue(MapConverter converter,Object input){
+    public Object transformValue(MapConverter converter, Object input){
         Object result = input;
         switch (converter.getMethod()){
             case "C0001":{
