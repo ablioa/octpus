@@ -21,7 +21,7 @@ public class TField {
      * 列索引
      */
     @XmlAttribute
-    private int column;
+    private int yy;
 
     /**
      * 字段值类型
@@ -42,7 +42,7 @@ public class TField {
      * 字段名
      */
     @XmlValue
-    private String data;
+    private String xxx;
 
     /**
      * 是否必填

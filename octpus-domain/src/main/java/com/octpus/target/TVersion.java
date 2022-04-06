@@ -11,8 +11,8 @@ public class TVersion {
     private String time;
 
     @XmlAttribute
-    private String content;
+    private String target;
 
     @XmlValue
-    private String data;
+    private String text;
 }

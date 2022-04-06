@@ -2,7 +2,7 @@ package org.octpus.map;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.octpus.core.BaseDynamicRoleData;
+import org.octpus.inspect.inspect.ModelDefinitionHelper;
 import org.octpus.map.config.MapConverter;
 import org.octpus.map.node.MapModel;
 import org.octpus.map.node.Node;
@@ -26,7 +26,6 @@ public class BeanMapContext {
     }
 
     public Object buildTargetObject(String clzName) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-
         Class clz = Class.forName(clzName);
         return clz.newInstance();
     }
@@ -43,7 +42,20 @@ public class BeanMapContext {
         return target;
     }
 
-    public void traverse(Node sourceNode,Object target, Object data) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+    /**
+     * 往目标的Bean对象上送数据
+     *
+     * @param sourceNode
+     * @param target
+     * @param data
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     */
+    public void traverse(Node sourceNode,Object target, Object data) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+
+        // determine the target type
+
         switch (sourceNode.getNodeType()) {
             case VECTOR: {
                 Object collectionObject = PropertyUtils.getProperty(data, sourceNode.getCode());
@@ -52,13 +64,16 @@ public class BeanMapContext {
                     indexCounter.put(sourceNode.getUuid(), ix);
                     traverse(sourceNode.getChild(),target, list.get(ix));
                 }
+
                 break;
             }
+
             case SCARLAR: {
                 Object item = PropertyUtils.getProperty(data, sourceNode.getCode());
                 traverse(sourceNode.getChild(),target, item);
                 break;
             }
+
             case PREMITIVE: {
                 Object object = PropertyUtils.getProperty(data, sourceNode.getCode());
                 Node handle = model.getObjectNodes().get(sourceNode.getUuid());
@@ -66,35 +81,39 @@ public class BeanMapContext {
                 break;
             }
         }
+
+//        log.info("source.code:{}",sourceNode.getCode());
     }
 
-    public Object addNode(Node na, Object target, Object object)  {
+    public Object addNode(Node na, Object target, Object object) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         Node currentNode = na.getRoot();
 
         Object parentObject = target;
         do {
             switch (currentNode.getNodeType()) {
                 case VECTOR: {
-                    if (parentObject instanceof BaseDynamicRoleData) {
-                        BaseDynamicRoleData pObj = (BaseDynamicRoleData) parentObject;
-                        Object subObject = pObj.getProperty(currentNode.getCode());
+                    if(parentObject instanceof List){
+                        List<Object> listObject = (List<Object>) parentObject;
+                        Integer index = indexCounter.get(currentNode.getUuid());
+                        while (index + 1 >= listObject.size()) {
+//                            listObject.add(new BaseDynamicRoleData());
+                            log.info("adding list item now.... 3333");
+                        }
+
+                        parentObject = listObject.get(index);
+                        log.info(">>>>>>>>>>>>>>> verctor from list");
+                    }else{
+                        Object subObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());//pObj.getProperty(currentNode.getCode());
                         if (subObject == null) {
-                            subObject = new LinkedList<>(); //
-                            pObj.setProperty(currentNode.getCode(), subObject);
+                            subObject = new LinkedList<>();
+                            PropertyUtils.setProperty(parentObject,currentNode.getCode(),subObject);
                         }
 
                         List<Object> listObject = (List<Object>) subObject;
                         Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 > listObject.size()) {
-                            listObject.add(new BaseDynamicRoleData());
-                        }
-                        parentObject = listObject.get(index);
-
-                    } else if (parentObject instanceof List) {
-                        List<Object> listObject = (List<Object>) parentObject;
-                        Integer index = indexCounter.get(currentNode.getUuid());
-                        while (index + 1 >= listObject.size()) {
-                            listObject.add(new BaseDynamicRoleData());
+                            Object obct = ModelDefinitionHelper.getListGenericType(parentObject.getClass(), currentNode.getCode());
+                            listObject.add(obct);
                         }
 
                         parentObject = listObject.get(index);
@@ -103,39 +122,34 @@ public class BeanMapContext {
                 }
 
                 case SCARLAR: {
-                    if (parentObject instanceof BaseDynamicRoleData) {
-                        BaseDynamicRoleData pObj = (BaseDynamicRoleData) parentObject;
-                        Object subObject = pObj.getProperty(currentNode.getCode());
-                        if (subObject == null) {
-                            pObj.setProperty(currentNode.getCode(), new BaseDynamicRoleData());
-                        }
-                        parentObject = pObj.getProperty(currentNode.getCode());
-                    } else if (parentObject instanceof List) {
+                    if(parentObject instanceof List){
                         List<Object> listObject = (List<Object>) parentObject;
                         Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 > listObject.size()) {
-                            listObject.add(new BaseDynamicRoleData());
+//                            listObject.add(new BaseDynamicRoleData());
+
+                            log.info("adding list item now.... 1111");
                         }
 
                         parentObject = listObject.get(index);
+                        log.info(">>>>>>>>>>>>>>> object from object");
+                    }else{
+                        Object subObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());
+                        if (subObject == null ) {
+                            Class clz = PropertyUtils.getPropertyType(parentObject,currentNode.getCode());
+                            subObject = clz.newInstance();
+                            PropertyUtils.setProperty(parentObject,currentNode.getCode(),subObject);
+                        }
+
+                        parentObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());
+//                        log.info(">>>>>>>>>>>>>>> object from object");
                     }
 
                     break;
                 }
 
                 case PREMITIVE: {
-                    if (parentObject instanceof BaseDynamicRoleData) {
-                        BaseDynamicRoleData pObj = (BaseDynamicRoleData) parentObject;
-                        Object subObject = pObj.getProperty(currentNode.getCode());
-                        if (subObject == null) {
-                            Object nvalue = object;
-                            if(currentNode.getConverter() != null){
-                                nvalue = transformValue(currentNode.getConverter(),object);
-                            }
-                            pObj.setProperty(currentNode.getCode(), nvalue);
-                        }
-                        parentObject = pObj.getProperty(currentNode.getCode());
-                    } else if (parentObject instanceof List) {
+                    if(parentObject instanceof List){
                         List<Object> listObject = (List<Object>) parentObject;
                         Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 > listObject.size()) {
@@ -143,8 +157,22 @@ public class BeanMapContext {
                         }
 
                         parentObject = listObject.get(index);
-                    }
+                    }else{
+//                        log.info("处理普通对象了: {}",parentObject.getClass());
+                        Object subObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());
+                        if (subObject == null) {
+                            Object nvalue = object;
 
+                            if(currentNode.getConverter() != null){
+                                nvalue = transformValue(currentNode.getConverter(),object);
+                            }
+
+                            PropertyUtils.setProperty(parentObject,currentNode.getCode(), nvalue);
+                        }
+
+//                        parentObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());
+                    }
+                    log.info(">>>>>>>>>>>>>>> primitve from premitive");
                     break;
                 }
             }

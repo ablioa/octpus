@@ -15,7 +15,7 @@ public class TSheet {
     @XmlAttribute
     private int start;
 
-    private String name;
+    private String title;
 
     private String sheetName;
 
@@ -26,6 +26,6 @@ public class TSheet {
     private List <Integer> candidateKey;
 
     @XmlElementWrapper(name="columns")
-    private List<TField> column;
+    private List<TField> field;
 
 }

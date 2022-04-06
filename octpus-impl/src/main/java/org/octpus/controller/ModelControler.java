@@ -1,6 +1,6 @@
 package org.octpus.controller;
 
-import com.octpus.model.XlsTemplate;
+import com.octpus.target.TDocument;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class ModelControler {
     @GetMapping("/catalog")
     @ApiOperation(value = "基础模型", notes = "")
     public ResponseEntity<Object> catalog() throws Exception {
-        Object result = ModelDefinitionHelper.retrieve("policy", XlsTemplate.class);
+        Object result = ModelDefinitionHelper.retrieve("policy", TDocument.class);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

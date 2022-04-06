@@ -17,16 +17,16 @@ public class TDocument {
     private String name;
 
     @XmlAttribute
-    private String subSystem;
+    private String module;
 
     @XmlAttribute
     private String description;
 
     @XmlElement(name="attribute")
-    private TDescription attribute;
+    private TDescription head;
 
     @XmlElementWrapper(name="entities")
-    private List<TSheet> entity;
+    private List<TSheet> data;
 
     /**
      * 解析excel的扩展字段

@@ -9,13 +9,13 @@ import java.util.List;
 @Data
 @XmlRootElement(name = "attribute")
 public class TDescription {
-    // 版本
-    @XmlAttribute
-    private String version;
+//    // 版本
+//    @XmlAttribute
+//    private String version;
 
     // 提供商N
     @XmlAttribute
-    private String vendor;
+    private String source;
 
     // 文件大小
     private String fileSize;
@@ -27,5 +27,5 @@ public class TDescription {
     private String checksum;
 
     @XmlElementWrapper(name="logs")
-    private List<TVersion> log;
+    private List<TVersion> version;
 }
