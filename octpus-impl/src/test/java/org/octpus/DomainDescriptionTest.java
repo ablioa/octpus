@@ -3,10 +3,12 @@ package org.octpus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.octpus.model.XlsTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.octpus.inspect.core.NodeDescriptor;
 import org.octpus.inspect.inspect.ModelDefinitionHelper;
+import org.octpus.inspect.inspect.domaini.PrimaryEntity;
 import org.octpus.map.BeanMapContext;
 import org.octpus.map.MapContext;
 import org.octpus.map.config.MapConfiguration;
@@ -18,6 +20,7 @@ import org.springframework.util.Assert;
 
 import java.io.IOException;
 
+@Slf4j
 @DisplayName("业务对象数据采集测试")
 public class DomainDescriptionTest {
     public XlsTemplate loadFromJson() throws IOException {
@@ -59,7 +62,8 @@ public class DomainDescriptionTest {
         Assert.notNull(mapper,"映射模板未定义。");
 
         MapContext context = new MapContext(mapper);
-        System.out.println(objectMapper.writeValueAsString(context.traverse(loadFromJson())));
+
+        log.info(">>> {}",objectMapper.writeValueAsString(context.traverse(loadFromJson())));
     }
 
     @DisplayName("Bean对象映射测试")
@@ -88,7 +92,8 @@ public class DomainDescriptionTest {
 
         BeanMapContext context = new BeanMapContext(mapper);
         Object result = context.traverse(loadFromJson());
-        System.out.println(objectMapper.writeValueAsString(result));
+
+        log.info(">>> {}",objectMapper.writeValueAsString(result));
     }
 
     @Test
@@ -99,6 +104,12 @@ public class DomainDescriptionTest {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        System.out.println("data:" + objectMapper.writeValueAsString(ss));
+        log.info(">>> {}",objectMapper.writeValueAsString(ss));
+    }
+
+    @Test
+    @DisplayName("取得列表元素类型")
+    public void test2() throws Exception{
+        Object nd = ModelDefinitionHelper.getListGenericType(PrimaryEntity.class,"address");
     }
 }

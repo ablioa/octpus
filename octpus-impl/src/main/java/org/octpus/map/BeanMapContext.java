@@ -53,9 +53,6 @@ public class BeanMapContext {
      * @throws NoSuchMethodException
      */
     public void traverse(Node sourceNode,Object target, Object data) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
-
-        // determine the target type
-
         switch (sourceNode.getNodeType()) {
             case VECTOR: {
                 Object collectionObject = PropertyUtils.getProperty(data, sourceNode.getCode());
@@ -81,10 +78,19 @@ public class BeanMapContext {
                 break;
             }
         }
-
-//        log.info("source.code:{}",sourceNode.getCode());
     }
 
+    /**
+     * 添加业务数据节点
+     * @param na
+     * @param target
+     * @param object
+     * @return
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws NoSuchMethodException
+     * @throws InstantiationException
+     */
     public Object addNode(Node na, Object target, Object object) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         Node currentNode = na.getRoot();
 
@@ -97,11 +103,9 @@ public class BeanMapContext {
                         Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 >= listObject.size()) {
 //                            listObject.add(new BaseDynamicRoleData());
-                            log.info("adding list item now.... 3333");
                         }
 
                         parentObject = listObject.get(index);
-                        log.info(">>>>>>>>>>>>>>> verctor from list");
                     }else{
                         Object subObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());//pObj.getProperty(currentNode.getCode());
                         if (subObject == null) {
@@ -127,12 +131,9 @@ public class BeanMapContext {
                         Integer index = indexCounter.get(currentNode.getUuid());
                         while (index + 1 > listObject.size()) {
 //                            listObject.add(new BaseDynamicRoleData());
-
-                            log.info("adding list item now.... 1111");
                         }
 
                         parentObject = listObject.get(index);
-                        log.info(">>>>>>>>>>>>>>> object from object");
                     }else{
                         Object subObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());
                         if (subObject == null ) {
@@ -142,7 +143,6 @@ public class BeanMapContext {
                         }
 
                         parentObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());
-//                        log.info(">>>>>>>>>>>>>>> object from object");
                     }
 
                     break;
@@ -158,7 +158,6 @@ public class BeanMapContext {
 
                         parentObject = listObject.get(index);
                     }else{
-//                        log.info("处理普通对象了: {}",parentObject.getClass());
                         Object subObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());
                         if (subObject == null) {
                             Object nvalue = object;
@@ -169,10 +168,7 @@ public class BeanMapContext {
 
                             PropertyUtils.setProperty(parentObject,currentNode.getCode(), nvalue);
                         }
-
-//                        parentObject = PropertyUtils.getProperty(parentObject,currentNode.getCode());
                     }
-                    log.info(">>>>>>>>>>>>>>> primitve from premitive");
                     break;
                 }
             }
@@ -202,12 +198,14 @@ public class BeanMapContext {
                 }
                 log.info("查表转换:{},{}",input,result);
                 break;
-            }
+            }// 139-168-32452
+
             case "C0002":{
                 log.info("执行脚本:{}",input);
                 result = MappingRuleExecutor.execute(converter.getGroovy(),input);
                 break;
             }
+
             case "C0003":{
                 log.info("执行Beean:{}",input);
                 break;

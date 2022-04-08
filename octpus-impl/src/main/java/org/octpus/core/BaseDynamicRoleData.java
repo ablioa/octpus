@@ -41,7 +41,6 @@ public class BaseDynamicRoleData extends BasePoGo {
         MetaProperty mp = DefaultGroovyMethods.hasProperty(this, property);
         Object value;
         if (mp == null) {
-            //先从动态属性中获取
             value = this.extPropertiesMap.get(property);
         } else {
             value = super.getProperty(property);
@@ -53,7 +52,6 @@ public class BaseDynamicRoleData extends BasePoGo {
     public void setProperty(String property, Object newValue) {
         MetaProperty mp = DefaultGroovyMethods.hasProperty(this, property);
         if (mp == null) {
-            //动态属性中设置
             this.extPropertiesMap.put(property, newValue);
         } else {
             super.setProperty(property, newValue);
@@ -61,12 +59,6 @@ public class BaseDynamicRoleData extends BasePoGo {
 
     }
 
-    /**
-     * 获取动态属性集合，使用JsonAnyGetter以保证jackson转换时忽略
-     *
-     * @return
-     */
-    @SuppressWarnings("unused")
     @ToString.Include(name = "extPropertiesMap")
     @JsonIgnore
     @JsonAnyGetter
@@ -74,23 +66,14 @@ public class BaseDynamicRoleData extends BasePoGo {
         return this.extPropertiesMap;
     }
 
-    /**
-     * json转对象时处理找不到对应属性时的处理方法
-     */
-    @SuppressWarnings("unused")
     @JsonAnySetter
-//    @Override
     public void anySetter(String property, Object value) {
         if (StringUtils.hasText(property) && value != null) {
-            //前端double类型会导致精度丢失 故转为String
             if (value instanceof Double) {
                 DecimalFormat decimalFormat = new DecimalFormat();
-                //不使用千分位
                 decimalFormat.setGroupingUsed(false);
-                //BigDecimal bigDecimalValue=new BigDecimal((Double) value);
                 value = decimalFormat.format(value);
             }
-            //动态属性中设置
             this.extPropertiesMap.put(property, value);
         }
     }

@@ -95,24 +95,4 @@ public class ModelDefinitionHelper {
 
         return new Object();
     }
-
-    public static void main(String [] args) throws Exception{
-        test2();
-    }
-
-    @Test
-    public static void test2() throws Exception{
-        Object nd = getListGenericType(PrimaryEntity.class,"address");
-        System.out.println("...");
-    }
-
-    @Test
-    public static void test1() throws Exception{
-        NodeDescriptor nd = retrieve("policy", PrimaryEntity.class);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        System.out.println(objectMapper.writeValueAsString(nd));
-    }
 }

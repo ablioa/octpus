@@ -3,83 +3,186 @@
 
 <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
-    <title>Dynamic Business Model</title>
+    <title>动态模型转换</title>
 
     <link rel="stylesheet" href="style/jquery.treegrid.css">
-    <link rel="stylesheet" href="style/bootstrap.min.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
 
-    <script src="script/jquery.min.js"></script>
+    <link rel="stylesheet" href="style/style.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script type="text/javascript" src="script/jquery.treegrid.min.js"></script>
-    <script src="script/bootstrap.min.js"></script>
-
-    <style>
-        body {
-            font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, WenQuanYi Micro Hei, Arial, sans-serif;
-            font-size: 1.2em;
-            width: 1280px;
-            margin: 0 auto;
-        }
-
-        /** 覆盖bootstrap的默认设置 */
-        .table>tbody>tr>td,
-        .table>tbody>tr>th,
-        .table>tfoot>tr>td,
-        .table>tfoot>tr>th,
-        .table>thead>tr>td,
-        .table>thead>tr>th {
-            padding: 1px;
-        }
-
-        /* .glyphicon {
-            font-family: none;
-        } */
-
-        .data-node {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #f00;
-        }
-
-        .to-node{
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #008800;
-        }
-    </style>
 </head>
 
 <body>
+    <div>
+        <div style="float: right;">
+            <button id="biz-export">导出</button>
+            <button id="biz-hide">过滤</button>
+        </div>
+    </div>
     <div class=".container">
-        <table class="tree"></table>
+        <table class="tree" style="width: 100%;"></table>
     </div>
 </body>
+
+<div id="dialog-form" title="字段映射规则编辑">
+    <form>
+        <fieldset>
+            <label for="ff">映射路径</label>
+            <input type="text" name="yyxx" id="ff" value="" class="text ui-widget-content ui-corner-all">
+
+            <label for="xx">字段名</label>
+            <input type="text" name="xxx" id="xx" value="" class="text ui-widget-content ui-corner-all">
+
+            <label for="biz-mapping-rule">映射规则</label>
+            <select id="biz-mapping-rule" value="" class="text ui-widget-content ui-corner-all">
+                <option value="">无</option>
+                <option value="C0001">码表映射</option>
+                <option value="C0002">脚本映射</option>
+                <!-- <option value="C0003">Bean映射</option> -->
+            </select>
+
+            <label for="biz-mapping-table" data-id="C0001" style="display: none;" class="biz-mapping-param">映射码表</label>
+            <textarea id="biz-mapping-table" data-id="C0001" style="display:none;width: 100%;resize: none;" rows="20"
+                cols="100" class="biz-mapping-param text ui-widget-content ui-corner-all"></textarea>
+
+            <label for="biz-mapping-script" data-id="C0002" style="display:none" class="biz-mapping-param">转换脚本</label>
+            <textarea id="biz-mapping-script" data-id="C0002" style="display:none;width: 100%;resize: none;" rows="20"
+                cols="100" class="biz-mapping-param text ui-widget-content ui-corner-all"></textarea>
+
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+        </fieldset>
+    </form>
+</div>
 
 <script type="text/javascript">
     var model = [];
     var modelMap = {};
     var parentMap = {};
+    var selectAll = false;
+
+    var showMute = true;
 
     // 树节点控制模式
     var expandNode = undefined;
 
-    function buildLine(nodeModel, parent) {
-        var $line = $('<tr></tr>');
-
-        var $from=$('<td width="40%" data-container="body"><span class="expressionText"><span class="data-node">' + nodeModel.name + '</span>/' + nodeModel.domainType + '</span></td>')
-        $line.append($from);
-
-        var $to=$('<td width="40%" data-container="body"><span class="expressionText"><span class="to-node">' + nodeModel.name + '</span>/' + nodeModel.domainType + '</span></td>')
-        $line.append($to);
-
-        var $tool=$('<td width="20%" style="text-align:right" data-container="body"><a><i class="glyphicon glyphicon-th-list"></i></a>&nbsp;<input type="checkbox" name="vehicle" value="Car" checked="checked" /></td>')
-        $line.append($tool);
-
-        return $line;
-    }
-
-    console.log("xxxx")
-
     $(function () {
+        var dialog, dialogModel,form;
+
+        dialog = $("#dialog-form").dialog({
+            autoOpen: false,
+            height: 600,
+            width: 800,
+            modal: true,
+            buttons: {
+                "确定": () => {
+                    console.log("TODO: 验证成功，在这里提交。");
+                    dialog.dialog("close");
+                },
+                Cancel: function () {
+                    dialog.dialog("close");
+                }
+            },
+            close: function () {
+                form[0].reset();
+                // allFields.removeClass("ui-state-error");
+            },
+            open: function(event,ui){
+                console.log("dialog: opend.",dialogModel);
+                $(this).find("#xx").val(dialogModel.name);
+            }
+        });
+
+        form = dialog.find("form").on("submit", function (event) {
+            event.preventDefault();
+        });
+
+        /** 编辑映射规则 */
+        $("#biz-mapping-rule").on("change", function () {
+            var rule = $(this).val();
+            $(".biz-mapping-param").hide();
+            if ("" !== rule) {
+                $(".biz-mapping-param[data-id=" + rule + "]").show();
+            }
+        });
+
+        $("#biz-export").on('click', () => {
+            // dialog.dialog("open");
+        })
+
+        /** 隐藏未选中 */
+        $("#biz-hide").on('click', function () {
+            let $all = $(".tree td input[type='checkbox']");
+
+            $all.each(function (index, $item) {
+                let val = $($item).prop('checked');
+                if (showMute && !val) {
+                    $($item).parent().parent().hide();
+                } else {
+                    $($item).parent().parent().show();
+                }
+            })
+
+            showMute = !showMute;
+        });
+
+        /** 选中所有 @deprecated */
+        $("#biz-select-all").on('click', function () {
+            if (!selectAll) {
+                $(".tree td input[type='checkbox']").prop('checked', true);
+                $(".tree td input[type='checkbox']").css({ 'background-color': "#0f0" });
+            } else {
+                $(".tree td input[type='checkbox']").css({ 'background-color': "#00f" });
+                $(".tree td input[type='checkbox']").prop('checked', false);
+            }
+
+            selectAll = !selectAll;
+        });
+
+        function buildLine(nodeModel, parent) {
+            let parentUuid = '0'
+            if (parent != null) {
+                parentUuid = parent.uuid;
+            }
+
+            var $line = $('<tr data-uuid=' + nodeModel.uuid + ' data-parent-uuid=' + parentUuid + '></tr>');
+            $line.data('model',nodeModel);
+
+            var $from = $('<td width="40%" data-container="body"><span class="expressionText"><span class="data-node">' + nodeModel.name + '</span>/' + nodeModel.domainType + '</span></td>')
+            $line.append($from);
+
+            var $to = $('<td width="40%" data-container="body"><span class="expressionText"><span class="to-node">' + nodeModel.name + '</span>/' + nodeModel.domainType + '</span></td>')
+            $line.append($to);
+
+            // checked="checked"
+            var $tool = $('<td width="20%" style="text-align:right" data-container="body"><span class="ui-icon ui-icon-document biz-info"></span><input style="display:inline;" type="checkbox"/></td>')
+            $line.append($tool);
+
+            $line.on('click', "span.biz-info", function() {
+                let $pa = $(this).parent().parent();
+                dialogModel = $pa.data('model');
+                dialog.dialog("open");
+            })
+
+            /** 选中节点时，同时选中上级节点 */
+            $line.on('change', "input:checkbox", function () {
+                let $rowItem = $(this).parent().parent();
+                let rootUuid = $rowItem.data("parent-uuid");
+                let path = $rowItem.data('uuid') + '<-' + $rowItem.data("parent-uuid");
+                while (rootUuid != '0') {
+                    let $pitem = $(".tree tr#" + rootUuid);
+                    rootUuid = $pitem.data('parent-uuid');
+
+                    path = path + '<-' + rootUuid
+                    $pitem.find('input:checkbox').prop('checked', true);
+                }
+            });
+
+            return $line;
+        }
+
         function refresh() {
             if (model.length > 0) {
                 $('#addRoot').hide();
@@ -94,7 +197,7 @@
                 var curNodeId = (nodeId++);
                 var parent = parentMap[nodeModel.uuid];
 
-                var $line = buildLine(nodeModel);
+                var $line = buildLine(nodeModel, parent);
                 $line.attr('id', nodeModel.uuid);
                 $line.data('model', nodeModel);
                 $line.addClass('treegrid-' + curNodeId);
@@ -122,8 +225,8 @@
             $('body').data('model', coreModel);
 
             $('.tree').treegrid({
-                'expanderExpandedClass': 'glyphicon glyphicon-minus',
-                'expanderCollapsedClass': 'glyphicon glyphicon-plus',
+                'expanderExpandedClass': 'ui-icon ui-icon-minus',
+                'expanderCollapsedClass': 'ui-icon ui-icon-plus',
                 onCollapse: function (yy) {
                 },
                 onExpand: function (xx) {
@@ -149,8 +252,8 @@
             success: function (data, textStatus, jqXHR) {
                 model = [];
                 model.push(data);
-                modelMap = {};//data.modelMap;
-                parentMap = {};//data.parentMap;
+                modelMap = {};
+                parentMap = {};
 
                 $.each(model, function (idx, node) {
                     rebuild(node, null);
@@ -163,13 +266,8 @@
 
         function rebuild(node, parentNode) {
             var nodeId = node.uuid;
-            if (modelMap[nodeId] != null) {
-                modelMap[nodeId] = node;
-            }
-
-            if (parentMap[nodeId] != null) {
-                parentMap[nodeId] = parentNode;
-            }
+            modelMap[nodeId] = node;
+            parentMap[nodeId] = parentNode;
 
             $.each(node.fields, function (idx, child) {
                 rebuild(child, node);

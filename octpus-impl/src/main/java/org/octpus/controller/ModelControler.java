@@ -1,5 +1,6 @@
 package org.octpus.controller;
 
+import com.cpic.PolicyDto;
 import com.octpus.target.TDocument;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +23,7 @@ public class ModelControler {
     @GetMapping("/catalog")
     @ApiOperation(value = "基础模型", notes = "")
     public ResponseEntity<Object> catalog() throws Exception {
-        Object result = ModelDefinitionHelper.retrieve("policy", TDocument.class);
+        Object result = ModelDefinitionHelper.retrieve("policy", PolicyDto.class);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

@@ -1,0 +1,64 @@
+body {
+    font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, WenQuanYi Micro Hei, Arial, sans-serif;
+    font-size: 0.8em;
+    width: 1000px;
+    margin: 0 auto;
+}
+
+/** 覆盖bootstrap的默认设置 */
+.table>tbody>tr>td,
+.table>tbody>tr>th,
+.table>tfoot>tr>td,
+.table>tfoot>tr>th,
+.table>thead>tr>td,
+.table>thead>tr>th {
+    padding: 1px;
+}
+
+.data-node {
+    font-weight: bold;
+    font-size: 0.8em;
+    color: #f00;
+}
+
+.to-node {
+    font-weight: bold;
+    font-size: 0.8em;
+    color: #008800;
+}
+
+.expressionText {
+    font-size: 0.8em;
+}
+
+label,
+input,
+select {
+    display: block;
+}
+
+input.text {
+    margin-bottom: 12px;
+    width: 95%;
+    padding: .4em;
+}
+
+fieldset {
+    padding: 0;
+    border: 0;
+    margin-top: 25px;
+}
+
+h1 {
+    font-size: 1.2em;
+    margin: .6em 0;
+}
+
+.ui-dialog .ui-state-error {
+    padding: .3em;
+}
+
+.validateTips {
+    border: 1px solid transparent;
+    padding: 0.3em;
+}
