@@ -1,4 +1,4 @@
-package org.octpus.configure;
+package org.octpus.components;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

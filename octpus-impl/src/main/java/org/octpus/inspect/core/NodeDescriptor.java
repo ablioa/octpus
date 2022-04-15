@@ -18,6 +18,8 @@ public class NodeDescriptor {
 
     private String name;
 
+    private boolean isCollection;
+
     private String annotation;
 
     private List<NodeDescriptor> fields;

@@ -23,7 +23,7 @@ public class ModelControler {
     @GetMapping("/catalog")
     @ApiOperation(value = "基础模型", notes = "")
     public ResponseEntity<Object> catalog() throws Exception {
-        Object result = ModelDefinitionHelper.retrieve("policy", PolicyDto.class);
+        Object result = ModelDefinitionHelper.retrieve("policy", PolicyDto.class,false);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

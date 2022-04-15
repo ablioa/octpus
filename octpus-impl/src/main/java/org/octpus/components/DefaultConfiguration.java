@@ -1,4 +1,4 @@
-package org.octpus.configure;
+package org.octpus.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

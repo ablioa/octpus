@@ -14,14 +14,12 @@ spring:
       hibernate:
         hbm2ddl:
           auto: update
-  data:
-    mongodb:
-      uri: mongodb://bookapp:abc123@warmcode.net:27017/bookdb?authSource=admin&authMechanism=SCRAM-SHA-1
+
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: "jdbc:mysql://warmcode.net:3306/bookdb?useUnicode=true&characterEncoding=UTF-8"
-    username: bookapp
-    password: "f50c64af02971a3886010b9329d63cdf"
+    url: "jdbc:mysql://warmcode.net:3306/drule?useUnicode=true&characterEncoding=UTF-8"
+    username: duser
+    password: "abc123"
     driverClassName: com.mysql.jdbc.Driver
     initialSize: 20
     minIdle: 20

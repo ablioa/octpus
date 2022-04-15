@@ -24,11 +24,12 @@ public class ModelDefinitionHelper {
         EXCEPTIONS.add("java.lang.Long");
     }
 
-    public static NodeDescriptor retrieve(String name, Class clazz) throws Exception{
+    public static NodeDescriptor retrieve(String name, Class clazz,boolean isCollection) throws Exception{
         NodeDescriptor root = new NodeDescriptor();
 
         root.setDomainType(clazz.getCanonicalName());
         root.setName(name);
+        root.setCollection(isCollection);
         Field[] fields = clazz.getDeclaredFields();
         for(Field field : fields){
             if(field.getType().getCanonicalName().equals("java.util.List")){
@@ -43,7 +44,7 @@ public class ModelDefinitionHelper {
                     Class<?> actualTypeArgument = (Class<?>)pt.getActualTypeArguments()[0];
                     if(!EXCEPTIONS.contains(actualTypeArgument.getCanonicalName())) {
                         Object actualType = actualTypeArgument.newInstance();
-                        root.getFields().add(retrieve(field.getName(), actualType.getClass()));
+                        root.getFields().add(retrieve(field.getName(), actualType.getClass(),true));
                     }
                 }
 
@@ -51,7 +52,7 @@ public class ModelDefinitionHelper {
             }
 
             if(!EXCEPTIONS.contains(field.getDeclaringClass().getCanonicalName())) {
-                root.getFields().add(retrieve(field.getName(), field.getType()));
+                root.getFields().add(retrieve(field.getName(), field.getType(),false));
             }
         }
 
