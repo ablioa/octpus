@@ -1,14 +1,17 @@
 package org.octpus.rules.service.impl;
 
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.octpus.rules.model.Rule;
 import org.octpus.rules.repository.RuleRepository;
 import org.octpus.rules.service.RuleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -16,6 +19,9 @@ import java.util.UUID;
 public class RuleServiceImpl implements RuleService {
     @Autowired
     private RuleRepository ruleRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     @Transactional(rollbackOn = Exception.class)
@@ -31,5 +37,10 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public Rule getRule(String rid) {
         return ruleRepository.findById(rid).orElse(null);
+    }
+
+    @Override
+    public List<String> getRuleIds(){
+        return jdbcTemplate.queryForList("select id from rule", String.class);
     }
 }

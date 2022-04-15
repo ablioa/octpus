@@ -2,6 +2,8 @@ package org.octpus.rules.service;
 
 import org.octpus.rules.model.Rule;
 
+import java.util.List;
+
 /**
  * 规则管理器
  * @author wangzh
@@ -20,4 +22,10 @@ public interface RuleService {
      * @return
      */
     Rule getRule(String rid);
+
+    /**
+     * 查询id
+     * @return
+     */
+    List<String> getRuleIds();
 }
