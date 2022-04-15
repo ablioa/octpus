@@ -32,8 +32,17 @@
             <button id="biz-hide">过滤</button>
         </div>
     </div>
+    
     <div class=".container">
         <table class="tree" style="width: 100%;"></table>
+    </div>
+
+    <div>
+        <table>
+            <tbody id="biz-rule-ids">
+
+            </tbody>
+        </table>
     </div>
 </body>
 
@@ -69,6 +78,24 @@
 </div>
 
 <script type="text/javascript">
+
+    function GetRequest() {
+        var url = location.search; //获取url中"?"符后的字串
+        var theRequest = new Object();
+    
+        if (url.indexOf("?") != -1) {
+            var str = url.substr(1);
+            strs = str.split("&");
+            for(var i = 0; i < strs.length; i ++) {
+                theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+            }
+        }
+    
+        return theRequest;
+    }
+
+    // console.log(">>",GetRequest());
+
     var selectAll = false;
 
     var showMute = true;
@@ -124,6 +151,9 @@
                         if(method === 'C0001'){
                             let table = $("#biz-mapping-table").val();
                             model.counterPart.table =  table;
+                            if(table==''){
+                                model.counterPart.table = null; 
+                            }
                         }else if(method === 'C0002'){
                             let groovy = $("#biz-mapping-script").val();
                             model.counterPart.groovy = groovy;
@@ -230,9 +260,13 @@
                     };
 
                     if(tmodel.counterPart.method != ''){
-                        oitem.method = tmodel.counterPart.method;
-                        oitem.groovy = tmodel.counterPart.groovy;
-                        oitem.table = tmodel.counterPart.table;
+                        let converter = {
+                            method: tmodel.counterPart.method,
+                            groovy: tmodel.counterPart.groovy,
+                            table: tmodel.counterPart.table
+                        };
+
+                        oitem.converter = converter;
                     }
 
                     config.objects.items.push(oitem);
@@ -302,11 +336,61 @@
             }
         });
 
-        
-        ds.getMapModel(function (data) {
-            coreModel = data;
-            buildTree();
-        });
+        // http://localhost/dem/?mode=edit&rid=ff64be62-cb2f-41a9-acda-c0a82c39976e
+        let param = GetRequest();
+        let mode = param['mode'];
+        if( mode == 'edit'){
+            let rid = param['rid'];
+            console.log(rid);
+            ds.getRuleById(rid,function(rule){
+                let id = rule.id;
+                let mr = JSON.parse(rule.rule);
+
+                let domainType = mr.subjects.domainType;
+                ds.getDomainMetaInfo(domainType,function(data){
+                    coreModel = data;
+
+                    console.log("model:",coreModel);
+                    console.log('rule:',mr)
+
+
+                    let objectMap = {};
+                    $.each(mr.objects.items,function(index,item){
+                        objectMap[item.mid] = item;
+                    })
+
+                    // mr.subjects.items
+
+                    $.each(mr.subjects.items,function(index,item){
+                        let onode = coreModel.pathMap[item.path];
+                        let object = objectMap[item.mid];
+
+                        onode.counterPart.name = object.path;
+                        onode.selected = true;
+                        console.log("item:",item,onode);
+                    });
+
+                    buildTree();
+                });
+            });
+        }
+        else if(mode == 'new'){
+            console.log("new ...");
+            ds.getMapModel(function (data) {
+                coreModel = data;
+                buildTree();
+            });
+        }
+        else{
+            ds.getRules(function(data){
+                $.each(data,function(idx,item){
+                    console.log(idx, " - ",item);
+                    let lurl = "http://localhost/dem/?mode=edit&rid="+item;
+                    $("#biz-rule-ids").append($("<tr><td><a href='"+lurl+"'>"+item+"</a></td></tr>"))
+                });
+            });
+            console.log("unknown mode");
+        }
     });
 
 </script>

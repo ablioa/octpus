@@ -14,7 +14,7 @@ const lineTemplate='<td width="40%" class="from" data-container="body"> \
                         </td>\
                         <td width="20%" class="action" style="text-align:right" data-container="body">\
                         <span class="ui-icon ui-icon-document biz-info"></span>\
-                        <input style="display:inline;" type="checkbox"/>\
+                        <input class="biz-field-selected" style="display:inline;" type="checkbox"/>\
                     </td>';
 /**
  * 构造树节点
@@ -38,8 +38,16 @@ function buildLine(nodeModel, parent) {
 
     $line.find('.data-node').text(nodeModel.name);
     $line.find('.data-type').text(nodeModel.domainType);
-    $line.find('.mapping-node').text(nodeModel.name);
-    $line.find('.mapping-type').text(nodeModel.domainType);
+    $line.find('.mapping-node').text(nodeModel.counterPart.name);
+    $line.find('.mapping-type').text(nodeModel.counterPart.domainType);
+
+    if(nodeModel.selected){
+        $line.find('.biz-field-selected').prop('checked',true);
+    }
+
+    if(nodeModel.fields.length != 0){
+        $line.find('.biz-field-selected').attr('disabled',true);
+    }
 
     return $line;
 }
