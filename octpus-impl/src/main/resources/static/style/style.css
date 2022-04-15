@@ -1,7 +1,7 @@
 body {
     font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans CJK SC, WenQuanYi Micro Hei, Arial, sans-serif;
     font-size: 0.8em;
-    width: 1000px;
+    width: 960px;
     margin: 0 auto;
 }
 
@@ -15,7 +15,7 @@ body {
     padding: 1px;
 }
 
-.data-node {
+/* .data-node {
     font-weight: bold;
     font-size: 0.8em;
     color: #f00;
@@ -25,16 +25,29 @@ body {
     font-weight: bold;
     font-size: 0.8em;
     color: #008800;
-}
+} */
 
-.expressionText {
+/* .expressionText {
     font-size: 0.8em;
-}
+} */
 
 label,
 input,
 select {
     display: block;
+}
+
+button{
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 3px 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.8em;
+    margin: 0.1em;
+    border-radius: 3px;
 }
 
 input.text {

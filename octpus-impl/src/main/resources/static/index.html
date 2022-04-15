@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
 
+<!--
+    treeGrid 参控文档
+    ================
+    https://maxazan.github.io/jquery-treegrid/
+-->
+
 <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <title>动态模型转换</title>
@@ -13,11 +19,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script type="text/javascript" src="script/jquery.treegrid.min.js"></script>
+
+    <script type="text/javascript" src="script/dataservice.js"></script>
+    <script type="text/javascript" src="script/treegridview.js"></script>
 </head>
 
 <body>
     <div>
         <div style="float: right;">
+            <button id="biz-xxx">隐藏类型</button>
             <button id="biz-export">导出</button>
             <button id="biz-hide">过滤</button>
         </div>
@@ -30,18 +40,14 @@
 <div id="dialog-form" title="字段映射规则编辑">
     <form>
         <fieldset>
-            <label for="ff">映射路径</label>
-            <input type="text" name="yyxx" id="ff" value="" class="text ui-widget-content ui-corner-all">
-
             <label for="xx">字段名</label>
-            <input type="text" name="xxx" id="xx" value="" class="text ui-widget-content ui-corner-all">
+            <input type="text" name="xxx" id="biz-field-name" value="" class="text ui-widget-content ui-corner-all">
 
             <label for="biz-mapping-rule">映射规则</label>
             <select id="biz-mapping-rule" value="" class="text ui-widget-content ui-corner-all">
                 <option value="">无</option>
                 <option value="C0001">码表映射</option>
                 <option value="C0002">脚本映射</option>
-                <!-- <option value="C0003">Bean映射</option> -->
             </select>
 
             <label for="biz-mapping-table" data-id="C0001" style="display: none;" class="biz-mapping-param">映射码表</label>
@@ -57,19 +63,47 @@
     </form>
 </div>
 
+<div id="dialog-export" title="导出配置模板" style="overflow: hidden;">
+    <textarea id="biz-config-model" cols="30" rows="10" style="overflow-x: hidden;font-family: consolas;font-weight: 0.8em;width: 100%;height: 100%;">
+    </textarea>
+</div>
+
 <script type="text/javascript">
-    var model = [];
-    var modelMap = {};
-    var parentMap = {};
     var selectAll = false;
 
     var showMute = true;
+    var $activeLine = {};
 
     // 树节点控制模式
     var expandNode = undefined;
 
+    var nodeId = 1;
+
     $(function () {
-        var dialog, dialogModel,form;
+        var dialog,exportDialog, form;
+
+        let ds = DataService();
+
+        exportDialog = $('#dialog-export').dialog({
+            autoOpen:false,
+            height: 600,
+            width: 960,
+            modal: true,
+            buttons:{
+                '确定':()=>{
+                    let jsonModel = exportDialog.data('config-model');
+                    ds.saveConfig(jsonModel);
+                    exportDialog.dialog("close");
+                },
+                '取消':()=>{
+                    exportDialog.dialog("close");
+                }
+            },
+            open: function(event,ui){
+                let jsonModel = exportDialog.data('config-model');
+                $(this).find("#biz-config-model").val(jsonModel);
+            }
+        });
 
         dialog = $("#dialog-form").dialog({
             autoOpen: false,
@@ -77,21 +111,41 @@
             width: 800,
             modal: true,
             buttons: {
-                "确定": () => {
-                    console.log("TODO: 验证成功，在这里提交。");
+                '确定': () => {
+                    let fieldName = $('#biz-field-name').val();
+
+                    let model = dialog.data('model');
+                    model.counterPart.name = fieldName;
+
+                    $activeLine.find(".mapping-node").text(fieldName);
+
+                    let method = $("#biz-mapping-rule").val();
+                    if(method != ''){
+                        if(method === 'C0001'){
+                            let table = $("#biz-mapping-table").val();
+                            model.counterPart.table =  table;
+                        }else if(method === 'C0002'){
+                            let groovy = $("#biz-mapping-script").val();
+                            model.counterPart.groovy = groovy;
+                        }
+                    }
+
+                    model.counterPart.method = method;
                     dialog.dialog("close");
                 },
-                Cancel: function () {
+                '取消': function () {
                     dialog.dialog("close");
                 }
             },
             close: function () {
                 form[0].reset();
-                // allFields.removeClass("ui-state-error");
             },
-            open: function(event,ui){
-                console.log("dialog: opend.",dialogModel);
-                $(this).find("#xx").val(dialogModel.name);
+            open: function (event, ui) {
+                let model = dialog.data('model');
+                $(this).find("#biz-field-name").val(model.counterPart.name);
+                $(this).find("#biz-mapping-table").val(model.counterPart.table);
+                $(this).find("#biz-mapping-script").val(model.counterPart.groovy);
+                $(this).find("#biz-mapping-rule").val(model.counterPart.method);
             }
         });
 
@@ -107,10 +161,6 @@
                 $(".biz-mapping-param[data-id=" + rule + "]").show();
             }
         });
-
-        $("#biz-export").on('click', () => {
-            // dialog.dialog("open");
-        })
 
         /** 隐藏未选中 */
         $("#biz-hide").on('click', function () {
@@ -128,102 +178,84 @@
             showMute = !showMute;
         });
 
-        /** 选中所有 @deprecated */
-        $("#biz-select-all").on('click', function () {
-            if (!selectAll) {
-                $(".tree td input[type='checkbox']").prop('checked', true);
-                $(".tree td input[type='checkbox']").css({ 'background-color': "#0f0" });
-            } else {
-                $(".tree td input[type='checkbox']").css({ 'background-color': "#00f" });
-                $(".tree td input[type='checkbox']").prop('checked', false);
+        $('#biz-xxx').on('click',function(){
+            let status = $(this).data('status');
+
+            if(status == null || typeof(status)== 'undefined'){
+                status = true;
             }
 
-            selectAll = !selectAll;
+            if(status){
+                $('.tree').find('.biz-tag-type').hide();
+                $(this).text("显示类型");
+                $(this).css({'background-color':'rgb(170,0,0)'})
+            }else{
+                $('.tree').find('.biz-tag-type').show();
+                $(this).text("隐藏类型")
+                $(this).css({'background-color':'#4CAF50'})
+            }
+
+            status = !status;
+            $(this).data('status',status);
         });
 
-        function buildLine(nodeModel, parent) {
-            let parentUuid = '0'
-            if (parent != null) {
-                parentUuid = parent.uuid;
-            }
-
-            var $line = $('<tr data-uuid=' + nodeModel.uuid + ' data-parent-uuid=' + parentUuid + '></tr>');
-            $line.data('model',nodeModel);
-
-            var $from = $('<td width="40%" data-container="body"><span class="expressionText"><span class="data-node">' + nodeModel.name + '</span>/' + nodeModel.domainType + '</span></td>')
-            $line.append($from);
-
-            var $to = $('<td width="40%" data-container="body"><span class="expressionText"><span class="to-node">' + nodeModel.name + '</span>/' + nodeModel.domainType + '</span></td>')
-            $line.append($to);
-
-            // checked="checked"
-            var $tool = $('<td width="20%" style="text-align:right" data-container="body"><span class="ui-icon ui-icon-document biz-info"></span><input style="display:inline;" type="checkbox"/></td>')
-            $line.append($tool);
-
-            $line.on('click', "span.biz-info", function() {
-                let $pa = $(this).parent().parent();
-                dialogModel = $pa.data('model');
-                dialog.dialog("open");
-            })
-
-            /** 选中节点时，同时选中上级节点 */
-            $line.on('change', "input:checkbox", function () {
-                let $rowItem = $(this).parent().parent();
-                let rootUuid = $rowItem.data("parent-uuid");
-                let path = $rowItem.data('uuid') + '<-' + $rowItem.data("parent-uuid");
-                while (rootUuid != '0') {
-                    let $pitem = $(".tree tr#" + rootUuid);
-                    rootUuid = $pitem.data('parent-uuid');
-
-                    path = path + '<-' + rootUuid
-                    $pitem.find('input:checkbox').prop('checked', true);
+        $('#biz-export').on('click',function(){
+            let config = {
+                mid:'xx',
+                version:'',
+                description: '',
+                subjects:{
+                    domainType: coreModel.rootNode.domainType,
+                    items:[]
+                },
+                objects:{
+                    domainType: coreModel.rootNode.counterPart.domainType,
+                    items:[]
                 }
-            });
-
-            return $line;
-        }
-
-        function refresh() {
-            if (model.length > 0) {
-                $('#addRoot').hide();
-            } else {
-                $('#addRoot').show();
-            }
-
-            $('.tree').empty();
-            $('.tree').append('<tbody></tbody>')
-
-            function renderNode(nodeModel, parentNodeId) {
-                var curNodeId = (nodeId++);
-                var parent = parentMap[nodeModel.uuid];
-
-                var $line = buildLine(nodeModel, parent);
-                $line.attr('id', nodeModel.uuid);
-                $line.data('model', nodeModel);
-                $line.addClass('treegrid-' + curNodeId);
-                if (parentNodeId != null) {
-                    $line.addClass('treegrid-parent-' + parentNodeId);
-                }
-                $tree.find('tbody').append($line);
-
-                $.each(nodeModel.fields, function (idx, item) {
-                    renderNode(item, curNodeId);
-                });
-            }
-
-            var nodeId = 1;
-            $.each(model, function (idx, item) {
-                renderNode(item);
-            });
-
-            var coreModel = {
-                model: model,
-                modelMap: modelMap,
-                parentMap: parentMap
             };
 
-            $('body').data('model', coreModel);
+            Object.keys(coreModel.nodeMap).forEach(function(a,b){
+                let tmodel = coreModel.nodeMap[a];
+                if(tmodel.selected && tmodel.fields.length === 0){
+                    let item = ds.retrieveReferencePath(tmodel);
 
+                    config.subjects.items.push({
+                        mid: item.mid,
+                        path: item.subject
+                    });
+
+                    let oitem = {
+                        mid: item.mid,
+                        path: item.object
+                    };
+
+                    if(tmodel.counterPart.method != ''){
+                        oitem.method = tmodel.counterPart.method;
+                        oitem.groovy = tmodel.counterPart.groovy;
+                        oitem.table = tmodel.counterPart.table;
+                    }
+
+                    config.objects.items.push(oitem);
+                }
+            });
+
+
+            let jsonModel = JSON.stringify(config,null,'  ');
+            exportDialog.data('config-model',jsonModel);
+            exportDialog.dialog("open");
+        });
+
+        function buildTree() {
+            var $tree = $('.tree');
+            $tree.empty();
+            $tree.append('<tbody></tbody>')
+            $tree.data('nodeId', 1);
+
+            $.each(coreModel.model, function (idx, item) {
+                renderNode($tree, item);
+            });
+
+            $('body').data('model', coreModel);
             $('.tree').treegrid({
                 'expanderExpandedClass': 'ui-icon ui-icon-minus',
                 'expanderCollapsedClass': 'ui-icon ui-icon-plus',
@@ -242,39 +274,40 @@
         }
 
         var $tree = $('.tree');
-        $tree.addClass('table');
+        $tree.on('click','span.biz-info',function(){
+            let $pa = $(this).parent().parent();
+            $activeLine = $pa;
 
-        var url = "http://localhost:8000/model/catalog";
-        $.ajax({
-            type: "GET",
-            url: url,
-            dataType: "JSON",
-            success: function (data, textStatus, jqXHR) {
-                model = [];
-                model.push(data);
-                modelMap = {};
-                parentMap = {};
+            dialog.data("model",$pa.data('mapModel'));
+            dialog.dialog("open");
+        });
 
-                $.each(model, function (idx, node) {
-                    rebuild(node, null);
-                });
+        $tree.on('change','input:checkbox',function(){
+            let $rowItem = $(this).parent().parent();
+            let rootUuid = $rowItem.data("parent-uuid");
 
-                refresh();
+            let status = $(this).prop('checked');
+            let model = $rowItem.data('model');
+            model.selected = status;
+
+            while (rootUuid != '0') {
+                let $pitem = $(".tree tr#" + rootUuid);
+                rootUuid = $pitem.data('parent-uuid');
+                $pitem.find('input:checkbox').prop('checked', true);
+
+                if(status){
+                    let pmodel = $pitem.data('model');
+                    pmodel.selected = true;
+                }
             }
         });
 
-
-        function rebuild(node, parentNode) {
-            var nodeId = node.uuid;
-            modelMap[nodeId] = node;
-            parentMap[nodeId] = parentNode;
-
-            $.each(node.fields, function (idx, child) {
-                rebuild(child, node);
-            })
-        }
+        
+        ds.getMapModel(function (data) {
+            coreModel = data;
+            buildTree();
+        });
     });
-
 
 </script>
 
