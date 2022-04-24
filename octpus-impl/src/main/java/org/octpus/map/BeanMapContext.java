@@ -6,7 +6,7 @@ import org.octpus.inspect.inspect.ModelDefinitionHelper;
 import org.octpus.map.config.MapConverter;
 import org.octpus.map.node.MapModel;
 import org.octpus.map.node.Node;
-import org.octpus.map.utils.MappingRuleExecutor;
+import org.octpus.map.script.MappingRuleExecutor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -198,7 +198,7 @@ public class BeanMapContext {
                 }
                 log.info("查表转换:{},{}",input,result);
                 break;
-            }// 139-168-32452
+            }
 
             case "C0002":{
                 log.info("执行脚本:{}",input);

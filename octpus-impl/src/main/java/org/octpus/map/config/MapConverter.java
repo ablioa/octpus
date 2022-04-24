@@ -13,7 +13,4 @@ public class MapConverter {
     private String groovy;
 
     private MapValueTable table;
-
-    public MapConverter(String data){
-    }
 }

@@ -1,4 +1,4 @@
-package org.octpus.map.utils;
+package org.octpus.map.script;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;

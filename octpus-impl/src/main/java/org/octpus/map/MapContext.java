@@ -7,7 +7,7 @@ import org.octpus.core.BaseDynamicRoleData;
 import org.octpus.map.config.MapConverter;
 import org.octpus.map.node.MapModel;
 import org.octpus.map.node.Node;
-import org.octpus.map.utils.MappingRuleExecutor;
+import org.octpus.map.script.MappingRuleExecutor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;

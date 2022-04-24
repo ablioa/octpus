@@ -6,6 +6,10 @@ import org.octpus.map.node.MapModel;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * 系统映射
+ * @author wangzh
+ */
 @Data
 public class SystemMapping {
     private Map<String, MapModel> maps;

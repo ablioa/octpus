@@ -1,7 +1,6 @@
 package org.octpus.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.octpus.map.BeanMapContext;
 import org.octpus.map.MapContext;
@@ -12,6 +11,10 @@ import org.octpus.rules.service.RuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * 数据转换服务
+ * @author wangzh
+ */
 @Slf4j
 @Component
 public class DataRetrieveService {
@@ -32,6 +35,8 @@ public class DataRetrieveService {
      */
     public Object mappingObject(String ruleCode) throws Exception{
         Rule rule = ruleService.getRule(ruleCode);
+
+        log.info(rule.getRule());
 
         MapConfiguration mc= objectMapper.readValue(rule.getRule(), MapConfiguration.class);
         log.info("装载映射模板:{}", mc);

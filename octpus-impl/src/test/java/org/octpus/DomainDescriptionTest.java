@@ -49,7 +49,8 @@ public class DomainDescriptionTest {
         MapContext context = new MapContext(mapper);
 
         Object testData = DataService.getTestData();
-        log.info(">>> {}",objectMapper.writeValueAsString(context.traverse(testData)));
+        Object output = context.traverse(testData);
+        log.info(">>> {}",objectMapper.writeValueAsString(output));
     }
 
     @DisplayName("Bean对象映射测试")
