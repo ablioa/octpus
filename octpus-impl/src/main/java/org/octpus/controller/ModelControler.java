@@ -1,8 +1,6 @@
 package org.octpus.controller;
 
-import com.cpic.PolicyDto;
 import com.octpus.model.XlsTemplate;
-import com.octpus.target.TDocument;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +20,30 @@ import org.springframework.web.bind.annotation.RequestParam;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class ModelControler {
 
+    public static final Class DEFAULT_MODEL = XlsTemplate.class;
+
+    @GetMapping("/class")
+    @ApiOperation(value = "检查业务模型是否存在", notes = "")
+    public ResponseEntity<String> validateClass(@RequestParam String className){
+        try {
+            Class clz = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            return new ResponseEntity<>("0001", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("0000", HttpStatus.OK);
+    }
+
     @GetMapping("/catalog")
-    @ApiOperation(value = "基础模型", notes = "")
-    public ResponseEntity<Object> catalog() throws Exception {
-        Object result = ModelDefinitionHelper.retrieve("", XlsTemplate.class,false);
+    @ApiOperation(value = "提取基础模型结构", notes = "")
+    public ResponseEntity<Object> catalog(@RequestParam String className) throws Exception {
+        log.info("领域模型对象: {}",className);
+
+        Class clz = DEFAULT_MODEL;
+        if(className != null){
+            clz = Class.forName(className);
+        }
+
+        Object result = ModelDefinitionHelper.retrieve("", clz,false);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

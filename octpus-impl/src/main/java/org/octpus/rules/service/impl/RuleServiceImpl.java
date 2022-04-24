@@ -2,6 +2,8 @@ package org.octpus.rules.service.impl;
 
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
+import netscape.security.UserTarget;
+import org.apache.commons.codec.binary.Base64;
 import org.octpus.rules.model.Rule;
 import org.octpus.rules.repository.RuleRepository;
 import org.octpus.rules.service.RuleService;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,5 +46,13 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public List<String> getRuleIds(){
         return jdbcTemplate.queryForList("select id from rule", String.class);
+    }
+
+    @Override
+    public String uuid(){
+        int num = (int)(Math.random() * 100);
+        long ts = new Date().getTime();
+        String digest = String.format("%04d%s",Long.toHexString(num),Long.toHexString(ts));
+        return new String(Base64.encodeBase64(digest.getBytes(StandardCharsets.UTF_8)));
     }
 }

@@ -24,6 +24,6 @@ bootJar{
 }
 
 dependencies{
-//    implementation files("${rootDir}/libs/real-model.jar")
+    implementation files("${rootDir}/libs/real-cmodel.jar")
     compile project(":octpus-impl")
 }

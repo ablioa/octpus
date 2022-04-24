@@ -2,13 +2,11 @@ package org.octpus.components;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.octpus.facility.XlsTemplatePool;
 import org.octpus.service.SystemMapping;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-//import org.octpus.book.model.ModelManager;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,17 +17,12 @@ public class DefaultConfiguration {
     public ObjectMapper getObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        return new ObjectMapper();
+        return objectMapper;
     }
 
     @Bean
     public SystemMapping getModelManager(){
         return new SystemMapping();
-    }
-
-    @Bean
-    public XlsTemplatePool getXlsTemplatePool(){
-        return new XlsTemplatePool();
     }
 
     @Bean

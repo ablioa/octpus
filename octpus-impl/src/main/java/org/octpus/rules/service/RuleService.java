@@ -28,4 +28,10 @@ public interface RuleService {
      * @return
      */
     List<String> getRuleIds();
+
+    /**
+     * 未定义
+     * @return
+     */
+    String uuid();
 }

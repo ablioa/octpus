@@ -13,30 +13,15 @@ import org.octpus.map.BeanMapContext;
 import org.octpus.map.MapContext;
 import org.octpus.map.config.MapConfiguration;
 import org.octpus.map.node.MapModel;
+import org.octpus.service.DataService;
 import org.octpus.service.SystemMapping;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
-
 @Slf4j
 @DisplayName("业务对象数据采集测试")
 public class DomainDescriptionTest {
-    public XlsTemplate loadFromJson() throws IOException {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        Resource[] ss = resolver.getResources("com/octpus/mapping/demo.json");
-        if(ss.length <= 0){
-            throw new IOException("文件不存在.");
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        XlsTemplate data = objectMapper.readValue(ss[0].getInputStream(), XlsTemplate.class);
-
-        return  data;
-    }
-
     @DisplayName("动态对象映射测试")
     @Test
     public void mapDynamicObject() throws Exception{
@@ -63,7 +48,8 @@ public class DomainDescriptionTest {
 
         MapContext context = new MapContext(mapper);
 
-        log.info(">>> {}",objectMapper.writeValueAsString(context.traverse(loadFromJson())));
+        Object testData = DataService.getTestData();
+        log.info(">>> {}",objectMapper.writeValueAsString(context.traverse(testData)));
     }
 
     @DisplayName("Bean对象映射测试")
@@ -91,7 +77,9 @@ public class DomainDescriptionTest {
         Assert.notNull(mapper,"映射模板未定义。");
 
         BeanMapContext context = new BeanMapContext(mapper);
-        Object result = context.traverse(loadFromJson());
+
+        Object testData = DataService.getTestData();
+        Object result = context.traverse(testData);
 
         log.info(">>> {}",objectMapper.writeValueAsString(result));
     }

@@ -2,6 +2,7 @@ package org.octpus.map.config;
 
 import lombok.Data;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,4 +13,8 @@ import java.util.Map;
 public class MapValueTable {
     private Map<String,String> table;
     private String defaultValue;
+
+    public MapValueTable(){
+        table = new HashMap<>();
+    }
 }

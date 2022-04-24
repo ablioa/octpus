@@ -1,0 +1,95 @@
+{
+  "mid": "xx",
+  "version": "",
+  "description": "",
+  "subjects": {
+    "domainType": "com.octpus.model.XlsTemplate",
+    "items": [
+      {
+        "mid": "3c674417-7e64-4f8c-99c7-c09cf836c5b2",
+        "path": "name"
+      },
+      {
+        "mid": "87445edc-19d0-4472-8678-5df760c9415c",
+        "path": "subSystem"
+      },
+      {
+        "mid": "bf2632bf-dea1-4f12-ae18-c30f35fadeaf",
+        "path": "description"
+      },
+      {
+        "mid": "db5994e1-97d2-423e-812a-b98e46c48b23",
+        "path": "attribute.version"
+      },
+      {
+        "mid": "4b7593be-e1ce-4d51-8b07-b67af655241c",
+        "path": "attribute.vendor"
+      },
+      {
+        "mid": "969e6c81-50e7-408b-a2b0-798fb46ea94b",
+        "path": "attribute.fileSize"
+      },
+      {
+        "mid": "b39521dd-a527-4a45-b3c6-97c2d0d2d2bf",
+        "path": "attribute.encoding"
+      },
+      {
+        "mid": "1048fc6e-bf65-4ec6-bad7-c2532e755024",
+        "path": "attribute.log[].time"
+      },
+      {
+        "mid": "61d9695c-450f-43f4-b00b-c335a08d3aef",
+        "path": "attribute.log[].content"
+      },
+      {
+        "mid": "d6487268-b1a2-4a07-b598-501713ff1f91",
+        "path": "attribute.log[].data"
+      }
+    ]
+  },
+  "objects": {
+    "domainType": "com.octpus.model.XlsTemplate",
+    "items": [
+      {
+        "mid": "3c674417-7e64-4f8c-99c7-c09cf836c5b2",
+        "path": "name"
+      },
+      {
+        "mid": "87445edc-19d0-4472-8678-5df760c9415c",
+        "path": "aaa"
+      },
+      {
+        "mid": "bf2632bf-dea1-4f12-ae18-c30f35fadeaf",
+        "path": "description"
+      },
+      {
+        "mid": "db5994e1-97d2-423e-812a-b98e46c48b23",
+        "path": "attribute.version"
+      },
+      {
+        "mid": "4b7593be-e1ce-4d51-8b07-b67af655241c",
+        "path": "attribute.vendor"
+      },
+      {
+        "mid": "969e6c81-50e7-408b-a2b0-798fb46ea94b",
+        "path": "attribute.fileSize"
+      },
+      {
+        "mid": "b39521dd-a527-4a45-b3c6-97c2d0d2d2bf",
+        "path": "attribute.encoding"
+      },
+      {
+        "mid": "1048fc6e-bf65-4ec6-bad7-c2532e755024",
+        "path": "attribute.log[].time"
+      },
+      {
+        "mid": "61d9695c-450f-43f4-b00b-c335a08d3aef",
+        "path": "attribute.log[].content"
+      },
+      {
+        "mid": "d6487268-b1a2-4a07-b598-501713ff1f91",
+        "path": "attribute.log[].data"
+      }
+    ]
+  }
+}

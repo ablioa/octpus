@@ -5,62 +5,28 @@
   "subjects": {
     "domainType": "aaa.vvv.bbb",
     "items": [
-      {
-        "mid": "1",
-        "path": "name"
-      },
-      {
-        "mid": "2",
-        "path": "subSystem"
-      },
-      {
-        "mid": "3",
-        "path": "attribute.vendor"
-      },
-      {
-        "mid": "4",
-        "path": "attribute.log[].content"
-      },
-      {
-        "mid": "5",
-        "path": "attribute.log[].data"
-      },
-      {
-        "mid": "6",
-        "path": "entity[].name"
-      },
-      {
-        "mid": "11",
-        "path": "entity[].column[].data"
-      },
-      {
-        "mid": "12",
-        "path": "entity[].column[].column"
-      }
+      {"mid": "1", "path": "name"},
+      {"mid": "2", "path": "subSystem"},
+      {"mid": "3", "path": "attribute.vendor"},
+      {"mid": "4", "path": "attribute.log[].content"},
+      {"mid": "5", "path": "attribute.log[].data"},
+      {"mid": "6", "path": "entity[].name"},
+      {"mid": "11", "path": "entity[].column[].data"},
+      {"mid": "12", "path": "entity[].column[].column"}
     ]
   },
   "objects": {
     "domainType": "mmm.qqq.wqw",
     "items": [
-      {
-        "mid": "1",
-        "path": "application"
-      },
-      {
-        "mid": "2",
-        "path": "module"
-      },
-      {
-        "mid": "3",
-        "path": "head.source",
+      {"mid": "1", "path": "application"},
+      {"mid": "2", "path": "module"},
+      {"mid": "3", "path": "head.source",
         "converter": {
           "method": "C0002",
           "groovy": "for(int ix =0; ix < 10; ix ++){System.out.println('########## '+input+' '+ix);} ;;return '你好'+input;"
         }
       },
-      {
-        "mid": "4",
-        "path": "head.version[].target",
+      {"mid": "4", "path": "head.version[].target",
         "converter": {
           "method": "C0001",
           "table": {
@@ -73,30 +39,17 @@
           }
         }
       },
+      {"mid": "5", "path": "head.version[].text"},
+      {"mid": "6","path": "data[].title"},
+      {"mid": "11", "path": "data[].field[].xxx"},
       {
-        "mid": "5",
-        "path": "head.version[].text"
-      },
-      {
-        "mid": "6",
-        "path": "data[].title"
-      },
-      {
-        "mid": "11",
-        "path": "data[].field[].xxx"
-      },
-      {
-        "mid": "12",
-        "path": "data[].field[].yy",
+        "mid": "12", "path": "data[].field[].yy",
         "converter": {
           "method": "C0002",
           "groovy": "System.out.println('adding:' +input);return (input * 1000+19);"
         }
       },
-      {
-        "mid": "14",
-        "path": "lang.type"
-      }
+      {"mid": "14", "path": "lang.type"}
     ]
   }
 }

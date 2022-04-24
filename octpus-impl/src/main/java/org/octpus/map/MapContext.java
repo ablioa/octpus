@@ -74,7 +74,7 @@ public class MapContext {
                         BaseDynamicRoleData pObj = (BaseDynamicRoleData) parentObject;
                         Object subObject = pObj.getProperty(currentNode.getCode());
                         if (subObject == null) {
-                            subObject = new LinkedList<>(); //
+                            subObject = new LinkedList<>();
                             pObj.setProperty(currentNode.getCode(), subObject);
                         }
 

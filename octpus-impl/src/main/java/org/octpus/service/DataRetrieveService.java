@@ -1,34 +1,74 @@
 package org.octpus.service;
 
-import com.octpus.facility.XlsTemplatePool;
-import com.octpus.model.XlsTemplate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.octpus.map.BeanMapContext;
 import org.octpus.map.MapContext;
+import org.octpus.map.config.MapConfiguration;
 import org.octpus.map.node.MapModel;
+import org.octpus.rules.model.Rule;
+import org.octpus.rules.service.RuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
-@Log
+@Slf4j
 @Component
 public class DataRetrieveService {
     @Autowired
-    private XlsTemplatePool xlsTemplatePool;
-
-    @Autowired
     private SystemMapping mapperPool;
 
-    public Object getData(){
-        return xlsTemplatePool.getTemplate("MID001");
-    }
+    @Autowired
+    private RuleService ruleService;
 
-    public Object retrive(String mid) throws Exception{
-        XlsTemplate testData = xlsTemplatePool.getTemplate("MID001");
+    @Autowired
+    private ObjectMapper objectMapper;
 
-        MapModel mapper = mapperPool.getMapper(mid);
-        Assert.notNull(mapper,"映射模板未定义。");
+    /**
+     * Object 映射
+     * @param ruleCode
+     * @return
+     * @throws Exception
+     */
+    public Object mappingObject(String ruleCode) throws Exception{
+        Rule rule = ruleService.getRule(ruleCode);
+
+        MapConfiguration mc= objectMapper.readValue(rule.getRule(), MapConfiguration.class);
+        log.info("装载映射模板:{}", mc);
+
+        MapModel mapper = new MapModel();
+        mapper.setConfiguration(mc);
+        mapper.init();
 
         MapContext context = new MapContext(mapper);
-        return context.traverse(testData);
+
+        Object result = context.traverse(DataService.getTestData());
+        log.info(">>> {}",objectMapper.writeValueAsString(result));
+
+        return result;
+    }
+
+    /**
+     * Object 映射
+     * @param ruleCode
+     * @return
+     * @throws Exception
+     */
+    public Object mappingBean(String ruleCode) throws Exception{
+        Rule rule = ruleService.getRule(ruleCode);
+
+        MapConfiguration mc= objectMapper.readValue(rule.getRule(), MapConfiguration.class);
+        log.info("装载映射模板:{}", mc);
+
+        MapModel mapper = new MapModel();
+        mapper.setConfiguration(mc);
+        mapper.init();
+
+        BeanMapContext context = new BeanMapContext(mapper);
+
+        Object result = context.traverse(DataService.getTestData());
+        log.info(">>> {}",objectMapper.writeValueAsString(result));
+
+        return result;
     }
 }

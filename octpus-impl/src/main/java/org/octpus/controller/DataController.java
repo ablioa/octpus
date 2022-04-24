@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.octpus.service.DataRetrieveService;
+import org.octpus.service.DataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,24 +17,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Slf4j
 @Controller
 @Api(tags = "保单数据转换服务")
-@RequestMapping("/data")
+@RequestMapping("/mapping")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class DataController {
+
     @Autowired
     private DataRetrieveService dataRetrieveService;
 
-    @GetMapping("/")
-    @ApiOperation(value = "业务数据映射", notes = "")
-    public ResponseEntity<Object> retrieve(@RequestParam String mapperCode) throws Exception {
-        Object xx = dataRetrieveService.retrive(mapperCode);
+    @GetMapping("/object")
+    @ApiOperation(value = "业务映射测试-Object", notes = "")
+    public ResponseEntity<Object> testObjectMapping(@RequestParam String ruleCode) throws Exception {
+        Object xx = dataRetrieveService.mappingObject(ruleCode);
         return new ResponseEntity<>(xx, HttpStatus.OK);
     }
 
-    @GetMapping("/data")
-    @ApiOperation(value = "业务数据查看", notes = "")
-    public ResponseEntity<Object> getData() throws Exception {
-        Object xx = dataRetrieveService.getData();
+    @GetMapping("/bean")
+    @ApiOperation(value = "业务映射测试-Bean", notes = "")
+    public ResponseEntity<Object> testBeanMapping(@RequestParam String ruleCode) throws Exception {
+        Object xx = dataRetrieveService.mappingBean(ruleCode);
         return new ResponseEntity<>(xx, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/data")
+    @ApiOperation(value = "查看测试业务数据", notes = "")
+    public ResponseEntity<Object> getData() throws Exception {
+        return new ResponseEntity<>(DataService.getTestData(), HttpStatus.OK);
     }
 
 }
