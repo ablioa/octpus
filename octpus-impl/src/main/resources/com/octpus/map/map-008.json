@@ -1,0 +1,26 @@
+{
+  "mid": "M078",
+  "version": "policy",
+  "description": "M08",
+  "subjects": {
+    "domainType": "",
+    "items": [
+      {"mid": "1", "path": "name"},
+      {"mid": "2", "path": "subSystem"},
+      {"mid": "3", "path": "attribute.vendor"}
+    ]
+  },
+  "objects": {
+    "domainType": "com.octpus.target.TDocument",
+    "items": [
+      {"mid": "1", "path": "name"},
+      {"mid": "2", "path": "module"},
+      {"mid": "3", "path": "head.source"}
+    ]
+  },
+  "extension": {
+    "items": [
+      {"mid": "path", "path":"aa.aa.aa"}
+    ]
+  }
+}

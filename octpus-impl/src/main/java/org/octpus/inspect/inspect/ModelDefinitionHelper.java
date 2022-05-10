@@ -1,11 +1,8 @@
 package org.octpus.inspect.inspect;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
 import org.octpus.inspect.core.NodeDescriptor;
-import org.octpus.inspect.inspect.domaini.PrimaryEntity;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -24,14 +21,22 @@ public class ModelDefinitionHelper {
         EXCEPTIONS.add("java.lang.Long");
     }
 
-    public static NodeDescriptor retrieve(String name, Class clazz,boolean isCollection) throws Exception{
+    public static NodeDescriptor retrieve(String name,String ann, Class clazz,boolean isCollection) throws Exception{
         NodeDescriptor root = new NodeDescriptor();
 
         root.setDomainType(clazz.getCanonicalName());
         root.setName(name);
         root.setCollection(isCollection);
+        root.setAnnotation(ann);
+
         Field[] fields = clazz.getDeclaredFields();
         for(Field field : fields){
+            String annotation = "";
+            ApiModelProperty fiedProperty = field.getAnnotation(ApiModelProperty.class);
+            if(fiedProperty!=null) {
+                annotation = fiedProperty.name();
+            }
+
             if(field.getType().getCanonicalName().equals("java.util.List")){
                 Type genericType = field.getGenericType();
 
@@ -44,7 +49,7 @@ public class ModelDefinitionHelper {
                     Class<?> actualTypeArgument = (Class<?>)pt.getActualTypeArguments()[0];
                     if(!EXCEPTIONS.contains(actualTypeArgument.getCanonicalName())) {
                         Object actualType = actualTypeArgument.newInstance();
-                        root.getFields().add(retrieve(field.getName(), actualType.getClass(),true));
+                        root.getFields().add(retrieve(field.getName(), annotation,actualType.getClass(),true));
                     }
                 }
 
@@ -52,7 +57,7 @@ public class ModelDefinitionHelper {
             }
 
             if(!EXCEPTIONS.contains(field.getDeclaringClass().getCanonicalName())) {
-                root.getFields().add(retrieve(field.getName(), field.getType(),false));
+                root.getFields().add(retrieve(field.getName(), annotation,field.getType(),false));
             }
         }
 

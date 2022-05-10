@@ -88,7 +88,7 @@ public class DomainDescriptionTest {
     @Test
     @DisplayName("采集业务对象信息测试")
     public void getDomainObjectDescription() throws Exception {
-        NodeDescriptor ss = ModelDefinitionHelper.retrieve("policy", XlsTemplate.class,false);
+        NodeDescriptor ss = ModelDefinitionHelper.retrieve("policy","", XlsTemplate.class,false);
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);

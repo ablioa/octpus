@@ -43,7 +43,7 @@ public class ModelControler {
             clz = Class.forName(className);
         }
 
-        Object result = ModelDefinitionHelper.retrieve("", clz,false);
+        Object result = ModelDefinitionHelper.retrieve("","", clz,false);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -51,7 +51,7 @@ public class ModelControler {
     @ApiOperation(value = "取得指定模型的元数据信息", notes = "")
     public ResponseEntity<Object> meta(@RequestParam String className) throws Exception {
         Class clz = Class.forName(className);
-        Object result = ModelDefinitionHelper.retrieve("", clz,false);
+        Object result = ModelDefinitionHelper.retrieve("","", clz,false);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
