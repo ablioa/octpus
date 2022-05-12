@@ -20,5 +20,4 @@ dependencies{
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:' +junitVersion
 
     implementation files("${rootDir}/libs/real-cmodel.jar")
-    compile project(":octpus-domain")
 }

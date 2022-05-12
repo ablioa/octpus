@@ -17,7 +17,7 @@
 ```
 // 源模型
 subjects:{
-    "domainType":"com.octpus.PolicyDTO",
+    "domainType":"org.fnd.modulator.PolicyDTO",
     "items":{
         {
             "mid":"xx",
@@ -29,7 +29,7 @@ subjects:{
 
 // 目标模型
 objects:{
-    "domainType":"com.octpus.PolicyDTO",
+    "domainType":"org.fnd.modulator.PolicyDTO",
     "items":{
         {
             "mid":"xx",

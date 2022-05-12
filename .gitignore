@@ -28,8 +28,5 @@ hs_err_pid*
 octpus-server/build/*
 octpus-server/out/*
 
-octpus-domain/build/*
-octpus-domain/out/*
-
 octpus-impl/build/*
 octpus-impl/out/*

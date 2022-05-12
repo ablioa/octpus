@@ -11,7 +11,7 @@
     ]
   },
   "objects": {
-    "domainType": "com.octpus.target.TDocument",
+    "domainType": "org.fnd.modulator.target.TDocument",
     "items": [
       {"mid": "1", "path": "name"},
       {"mid": "2", "path": "module"},

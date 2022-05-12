@@ -3,7 +3,7 @@
   "version": "",
   "description": "",
   "subjects": {
-    "domainType": "com.octpus.model.XlsTemplate",
+    "domainType": "org.fnd.modulator.model.XlsTemplate",
     "items": [
       {
         "mid": "3c674417-7e64-4f8c-99c7-c09cf836c5b2",
@@ -48,7 +48,7 @@
     ]
   },
   "objects": {
-    "domainType": "com.octpus.model.XlsTemplate",
+    "domainType": "org.fnd.modulator.model.XlsTemplate",
     "items": [
       {
         "mid": "3c674417-7e64-4f8c-99c7-c09cf836c5b2",

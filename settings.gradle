@@ -2,4 +2,3 @@ rootProject.name="octpus"
 
 include 'octpus-impl'
 include 'octpus-server'
-include 'octpus-domain'
