@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.octpus.core.BaseDynamicRoleData;
 import org.octpus.map.config.MapConverter;
+import org.octpus.map.config.MapItem;
 import org.octpus.map.node.MapModel;
 import org.octpus.map.node.Node;
+import org.octpus.map.script.ConversionContext;
 import org.octpus.map.script.MappingRuleExecutor;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,17 +24,33 @@ public class MapContext {
 
     private Map<String, Integer> indexCounter;
 
+    private Object source;
+
+    private Object target;
+
     public MapContext(MapModel model) {
         this.model = model;
         indexCounter = new HashMap<>();
     }
 
-    public Object traverse(Object data) throws Exception {
+    public Object traverse(Object source) throws Exception {
         BaseDynamicRoleData target = new BaseDynamicRoleData();
         List<Node> attributes = model.getSubjectTree();
 
-        for(Node na : attributes){
-            traverse(na,target,data);
+        this.target = target;
+        this.source = source;
+
+        for(Node node : attributes){
+            traverse(node,target,source);
+        }
+
+//        log.info("##### 处理目标扩展节点: {}");
+        List<MapItem> extItems = model.getExeNodes();
+        for(MapItem v : extItems){
+//            log.info("## %%% ## {} : {}: {}",v.getMid(),v.getPath(),v.getConverter());
+            String script = v.getConverter().getGroovy();
+            Object result = MappingRuleExecutor.execute(getConversionContext("你好"),script,"你好");
+            target.setProperty(v.getPath(),result);
         }
 
         return target;
@@ -140,7 +158,6 @@ public class MapContext {
                         parentObject = listObject.get(index);
                     }
 
-
                     break;
                 }
             }
@@ -149,6 +166,10 @@ public class MapContext {
         } while (currentNode != null);
 
         return parentObject;
+    }
+
+    public ConversionContext getConversionContext(Object input){
+        return new ConversionContext( this.source,this.target,input);
     }
 
     /**
@@ -162,6 +183,9 @@ public class MapContext {
      */
     public Object transformValue(MapConverter converter,Object input){
         Object result = input;
+
+        ConversionContext context = new ConversionContext(this.source,this.target,input);
+
         switch (converter.getMethod()){
             case "C0001":{
                 result = converter.getTable().getTable().get(input);
@@ -173,7 +197,7 @@ public class MapContext {
             }
             case "C0002":{
                 log.info("执行脚本:{}",input);
-                result = MappingRuleExecutor.execute(converter.getGroovy(),input);
+                result = MappingRuleExecutor.execute(context,converter.getGroovy(),input);
                 break;
             }
             case "C0003":{

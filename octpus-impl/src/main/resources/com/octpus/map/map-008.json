@@ -16,11 +16,15 @@
       {"mid": "1", "path": "name"},
       {"mid": "2", "path": "module"},
       {"mid": "3", "path": "head.source"}
-    ]
-  },
-  "extension": {
-    "items": [
-      {"mid": "path", "path":"aa.aa.aa"}
+    ],
+    "ext": [
+      {
+        "mid": "3",
+        "path": "myExtension",
+        "converter": {
+        "method": "C0002",
+        "groovy": "NodeDescriptor d= new NodeDescriptor(); d.setUuid('xxxx'); d.setName(input);println('-------');println(source);println(input);println(target);println('#########')println('-------');;return d"
+      }}
     ]
   }
 }

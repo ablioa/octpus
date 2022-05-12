@@ -13,4 +13,6 @@ public class MappingEntry {
     private String domainType;
 
     private List<MapItem> items;
+
+    private List<MapItem> ext;
 }

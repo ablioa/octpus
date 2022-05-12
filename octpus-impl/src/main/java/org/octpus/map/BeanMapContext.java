@@ -202,7 +202,7 @@ public class BeanMapContext {
 
             case "C0002":{
                 log.info("执行脚本:{}",input);
-                result = MappingRuleExecutor.execute(converter.getGroovy(),input);
+                result = "";//MappingRuleExecutor.execute(converter.getGroovy(),input);
                 break;
             }
 

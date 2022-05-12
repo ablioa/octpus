@@ -1,6 +1,7 @@
 package org.octpus.map.node;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.octpus.map.config.MapConfiguration;
 import org.octpus.map.config.MapItem;
 
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Data
 public class MapModel {
     private MapConfiguration configuration;
@@ -17,14 +19,20 @@ public class MapModel {
 
     private Map<String, Node> objectNodes;
 
+//    private Map<String,Node> extNodes;
+
     private List<Node> subjectTree;
+
+    private List<MapItem> exeNodes;
 
     public void init(){
         // TODO 添加校验规则，校验映射数量和类型
         // ...
 
+
         subjectNodes = parse(configuration.getSubjects().getItems());
         objectNodes = parse(configuration.getObjects().getItems());
+        exeNodes = buildExtNodes();
 
         subjectTree = new LinkedList<>();
         subjectNodes.forEach((k,v)->{
@@ -32,6 +40,20 @@ public class MapModel {
                 subjectTree.add(v);
             }
         });
+    }
+
+    public List <MapItem> buildExtNodes(){
+        List <MapItem> output = new LinkedList<>();
+
+        /////
+        List <MapItem> xx = configuration.getObjects().getExt();
+        xx.forEach(v->{
+//            extNodes.put(v.getMid(),v);
+            output.add(v);
+        });
+        ////
+
+        return output;
     }
 
     public Map<String, Node> parse(List<MapItem> from){
